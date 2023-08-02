@@ -33,10 +33,15 @@ public class AddPoints extends HttpServlet {
         LocalDate localDate = LocalDate.now();
         Student studentByName = studentService.getStudentByName(name);
         LinkedList<Point> points = studentByName.getPoints();
-        Point last = points.getLast();
+        if (points.peekLast() == null) {
+            points.add(new Point(0));
+        }
+
+        Point last = points.peekLast();
+
         double score = last.getScore();
         LocalDate localDate1 = last.getLocalDate();
-        if (localDate1.isEqual(localDate)) {
+        if (localDate1 == null || localDate.isEqual(localDate1)) {
             last.setScore(++score);
         } else {
             studentByName.getPoints().add(new Point(1));

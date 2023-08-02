@@ -18,6 +18,7 @@ import java.util.List;
 @WebServlet(name = "ChoosePair", value = "/create-pair")
 public class ChoosePair extends HttpServlet {
     private StudentService studentService;
+
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
@@ -30,11 +31,21 @@ public class ChoosePair extends HttpServlet {
         List<Student> pairOfStudent = dto.getPairOfStudent();
         List<Student> firstSubGroup = dto.getFirstSubGroup();
         List<Student> secondSubGroup = dto.getSecondSubGroup();
+
         req.setAttribute("firstStudent", pairOfStudent.get(0));
         req.setAttribute("secondStudent", pairOfStudent.get(1));
-        req.setAttribute("firstSubGroup", firstSubGroup);
-        req.setAttribute("secondSubGroup", secondSubGroup);
-        RequestDispatcher requestDispatcher = req.getRequestDispatcher("/students");
+        req.setAttribute("firstGroup", firstSubGroup);
+        req.setAttribute("secondGroup", secondSubGroup);
+
+        if (firstSubGroup.isEmpty() || secondSubGroup.isEmpty()) {
+            double averageMarkOne = studentService.getAverageMark(1);
+            double averageMarkTwo = studentService.getAverageMark(2);
+
+            req.setAttribute("markOne", averageMarkOne);
+            req.setAttribute("markTwo", averageMarkTwo);
+        }
+
+        RequestDispatcher requestDispatcher = req.getRequestDispatcher("welcome-page.jsp");
         requestDispatcher.forward(req, resp);
     }
 }

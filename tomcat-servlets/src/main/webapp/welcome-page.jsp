@@ -18,12 +18,11 @@
         </ul>
         <h2>First Student</h2>
         <p>${firstStudent.name}</p>
-        <p>${firstStudent.age}</p>
         <!-- Add other student details as needed -->
 
         <!-- Form to add score for the firstStudent -->
         <form action="/tomcat/update-score" method="post">
-            <input type="hidden" name="studentName" value="${firstStudent.name}" />
+            <input type="hidden" name="name" value="${firstStudent.name}" />
             <input type="submit" value="Add Score" />
         </form>
     </div>
@@ -38,21 +37,24 @@
         </ul>
         <h2>Second Student</h2>
         <p>${secondStudent.name}</p>
-        <p>${secondStudent.age}</p>
 
         <!-- Add other student details as needed -->
 
         <!-- Form to add score for the secondStudent -->
         <form action="/tomcat/update-score" method="post">
-            <input type="hidden" name="studentName" value="${secondStudent.name}" />
+            <input type="hidden" name="name" value="${secondStudent.name}" />
             <input type="submit" value="Add Score" />
         </form>
     </div>
-
-    <a href="/tomcat/create-pair">Create Pair with GET request</a>
-
-
-
 </div>
+
+<form action="/tomcat/create-pair" method="get">
+            <input type="submit" value="Create Pair" />
+</form>
+
+<h3>${markOne}</h3>
+<br/>
+<h3>${markTwo}</h3>
+
 </body>
 </html>

@@ -21,6 +21,11 @@ public class StudentService {
     List<Student> secondSubGroup;
     JdbcPointsRepository jdbcPointsRepository;
 
+    int groupOneCounter = 0;
+    int groupTwoCounter = 0;
+    int studentsFromFirstGroup = 0;
+    int studentsFromSecondGroup = 0;
+
     public StudentService(JdbcStudentRepository jdbcStudentRepository) {
         this.jdbcStudentRepository = new JdbcStudentRepository();
         jdbcPointsRepository = new JdbcPointsRepository();
@@ -37,11 +42,19 @@ public class StudentService {
     public TwoSubGroupsAndTwoPeopleDTO getPairOfStudent() {
         Student student1 = choosePersonFirstGroup();
         Student student2 = choosePersonSecondGroup();
-        while (student1.getPreviousOpponent() != student2.getId()) {
-            student2 = choosePersonSecondGroup();
-        }
+
+//        while (student1.getPreviousOpponent() != student2.getId()) {
+//            student2 = choosePersonSecondGroup();
+//        }
+
+//        groupOneCounter += student1.getPoints().getLast().getScore();
+//        groupTwoCounter += student2.getPoints().getLast().getScore();
+
         firstSubGroup.remove(student1);
+        studentsFromFirstGroup += 1;
         secondSubGroup.remove(student2);
+        studentsFromSecondGroup += 1;
+
         List<Student> pair = List.of(student1, student2);
         return new TwoSubGroupsAndTwoPeopleDTO(firstSubGroup, secondSubGroup, pair);
     }
@@ -98,4 +111,7 @@ public class StudentService {
         return students.get(0);
     }
 
+    public double getAverageMark(int groupNumber) {
+        return groupNumber == 1 ? groupOneCounter / studentsFromFirstGroup : groupTwoCounter / studentsFromSecondGroup;
+    }
 }
