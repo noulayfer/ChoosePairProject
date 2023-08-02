@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import org.example.DTO.TwoSubGroupsAndTwoPeopleDTO;
 import org.example.model.Point;
 import org.example.model.Student;
 import org.example.repository.JdbcStudentRepository;
@@ -24,18 +25,21 @@ public class AddPoints extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        studentService = new StudentService(new JdbcStudentRepository());
+        studentService = StudentService.getInstance(new JdbcStudentRepository());
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String name = req.getParameter("name");
+        System.out.println(name);
         LocalDate localDate = LocalDate.now();
-        Student studentByName = studentService.getStudentByName(name);
+        Student studentByName = studentService.getStudentFromList(name);
         LinkedList<Point> points = studentByName.getPoints();
         if (points.peekLast() == null) {
             points.add(new Point(0));
         }
+        studentByName.setPoints(points);
+        System.out.println(studentByName);
 
         Point last = points.peekLast();
 
@@ -47,6 +51,13 @@ public class AddPoints extends HttpServlet {
             studentByName.getPoints().add(new Point(1));
         }
         req.setAttribute("score", points.getLast().getScore());
+        List<Student> pairOfStudent = studentService.getLastPair();
+        List<Student> firstSubGroup = studentService.getFirstSubGroup();
+        List<Student> secondSubGroup = studentService.getSecondSubGroup();
+        req.setAttribute("firstStudent", pairOfStudent.get(0));
+        req.setAttribute("secondStudent", pairOfStudent.get(1));
+        req.setAttribute("firstGroup", firstSubGroup);
+        req.setAttribute("secondGroup", secondSubGroup);
         RequestDispatcher requestDispatcher = req.getRequestDispatcher("welcome-page.jsp");
         requestDispatcher.forward(req, resp);
     }

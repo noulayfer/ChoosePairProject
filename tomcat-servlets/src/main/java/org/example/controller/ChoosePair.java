@@ -22,7 +22,7 @@ public class ChoosePair extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        studentService = new StudentService(new JdbcStudentRepository());
+        studentService = StudentService.getInstance(new JdbcStudentRepository());
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.example.service;
 
+import lombok.Getter;
 import lombok.SneakyThrows;
 import org.example.DTO.TwoSubGroups;
 import org.example.DTO.TwoSubGroupsAndTwoPeopleDTO;
@@ -15,24 +16,39 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+@Getter
 public class StudentService {
     JdbcStudentRepository jdbcStudentRepository;
     List<Student> firstSubGroup;
     List<Student> secondSubGroup;
     JdbcPointsRepository jdbcPointsRepository;
+    List<Student> lastPair;
+    private static StudentService STUDENT_SERVICE;
+
 
     int groupOneCounter = 0;
     int groupTwoCounter = 0;
     int studentsFromFirstGroup = 0;
     int studentsFromSecondGroup = 0;
 
-    public StudentService(JdbcStudentRepository jdbcStudentRepository) {
+    public static StudentService getInstance(JdbcStudentRepository jdbcStudentRepository) {
+        if (STUDENT_SERVICE == null) {
+            STUDENT_SERVICE = new StudentService(jdbcStudentRepository);
+            return STUDENT_SERVICE;
+        } else {
+            return STUDENT_SERVICE;
+        }
+    }
+
+
+    private StudentService(JdbcStudentRepository jdbcStudentRepository) {
         this.jdbcStudentRepository = new JdbcStudentRepository();
         jdbcPointsRepository = new JdbcPointsRepository();
         ResultSet studentsByGroup1 = jdbcStudentRepository.getStudentsByGroup(1);
         ResultSet studentsByGroup2 = jdbcStudentRepository.getStudentsByGroup(2);
         firstSubGroup = mapResultSetToStudents(studentsByGroup1);
         secondSubGroup = mapResultSetToStudents(studentsByGroup2);
+        lastPair = new ArrayList<>();
     }
 
     public TwoSubGroups getTwoSubGroups() {
@@ -40,6 +56,12 @@ public class StudentService {
     }
 
     public TwoSubGroupsAndTwoPeopleDTO getPairOfStudent() {
+        if (!lastPair.isEmpty()) {
+            System.out.println(lastPair.get(0));
+            System.out.println(lastPair.get(1));
+            groupOneCounter += lastPair.get(0).getPoints().peekLast().getScore();
+            groupTwoCounter += lastPair.get(1).getPoints().peekLast().getScore();
+        }
         Student student1 = choosePersonFirstGroup();
         Student student2 = choosePersonSecondGroup();
 
@@ -47,16 +69,16 @@ public class StudentService {
 //            student2 = choosePersonSecondGroup();
 //        }
 
-//        groupOneCounter += student1.getPoints().getLast().getScore();
-//        groupTwoCounter += student2.getPoints().getLast().getScore();
 
         firstSubGroup.remove(student1);
         studentsFromFirstGroup += 1;
         secondSubGroup.remove(student2);
         studentsFromSecondGroup += 1;
 
-        List<Student> pair = List.of(student1, student2);
-        return new TwoSubGroupsAndTwoPeopleDTO(firstSubGroup, secondSubGroup, pair);
+        lastPair = new LinkedList<>();
+        lastPair.add(student1);
+        lastPair.add(student2);
+        return new TwoSubGroupsAndTwoPeopleDTO(firstSubGroup, secondSubGroup, lastPair);
     }
 
     public Student choosePersonFirstGroup() {
@@ -111,7 +133,12 @@ public class StudentService {
         return students.get(0);
     }
 
+    public Student getStudentFromList(String name) {
+        Student student = lastPair.stream().filter(x -> x.getName().equals(name)).findFirst().get();
+        return student;
+    }
+
     public double getAverageMark(int groupNumber) {
-        return groupNumber == 1 ? groupOneCounter / studentsFromFirstGroup : groupTwoCounter / studentsFromSecondGroup;
+        return groupNumber == 1 ? (double) groupOneCounter / studentsFromFirstGroup : (double) groupTwoCounter / studentsFromSecondGroup;
     }
 }
