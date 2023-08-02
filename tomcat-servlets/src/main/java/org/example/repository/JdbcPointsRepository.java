@@ -15,7 +15,7 @@ public class JdbcPointsRepository {
                 "    localDate DATE NOT NULL," +
                 "    score DOUBLE PRECISION NOT NULL," +
                 "    student_id INT," +
-                "    FOREIGN KEY (student_id) REFERENCES \"Student\"(id)" +
+                "    FOREIGN KEY (student_id) REFERENCES Student(id)" +
                 ");").executeUpdate();
     }
 
@@ -23,7 +23,7 @@ public class JdbcPointsRepository {
     public ResultSet getPointsOfUser(int id) {
         Connection connection = JdbcUtil.getConnection();
         ResultSet resultSet = connection.prepareStatement(
-                        "SELECT * FROM \"Points\" WHERE student_id = ?;")
+                        "SELECT * FROM Points WHERE student_id = ?;")
                         .executeQuery();
         return resultSet;
     }

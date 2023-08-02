@@ -14,11 +14,10 @@ public class JdbcStudentRepository {
         Connection connection = JdbcUtil.getConnection();
         connection.prepareStatement(
                 "CREATE TABLE IF NOT EXISTS Student (" +
-                        "    id PRIMARY KEY," +
+                        "    id INT PRIMARY KEY," +
                         "    name VARCHAR(255) NOT NULL," +
                         "    number_of_group INTEGER NOT NULL," +
-                        "    previous_opponent INTEGER," +
-                        "    id REFERENCES \"Points\"(user_id)" +
+                        "    previous_opponent INTEGER" +
                         ");"
         ).executeUpdate();
     }
