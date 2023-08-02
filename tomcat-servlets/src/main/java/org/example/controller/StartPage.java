@@ -1,7 +1,6 @@
 package org.example.controller;
 
-import org.example.DTO.TwoSubGroupsAndTwoPeopleDTO;
-import org.example.model.Student;
+import org.example.DTO.TwoSubGroups;
 import org.example.repository.JdbcStudentRepository;
 import org.example.service.StudentService;
 
@@ -13,10 +12,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 
-@WebServlet(name = "ChoosePair", value = "/create-pair")
-public class ChoosePair extends HttpServlet {
+@WebServlet(name = "Welcome", value = "/students")
+public class StartPage extends HttpServlet {
     private StudentService studentService;
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -26,15 +24,10 @@ public class ChoosePair extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        TwoSubGroupsAndTwoPeopleDTO dto = studentService.getPairOfStudent();
-        List<Student> pairOfStudent = dto.getPairOfStudent();
-        List<Student> firstSubGroup = dto.getFirstSubGroup();
-        List<Student> secondSubGroup = dto.getSecondSubGroup();
-        req.setAttribute("firstStudent", pairOfStudent.get(0));
-        req.setAttribute("secondStudent", pairOfStudent.get(1));
-        req.setAttribute("firstSubGroup", firstSubGroup);
-        req.setAttribute("secondSubGroup", secondSubGroup);
-        RequestDispatcher requestDispatcher = req.getRequestDispatcher("/students");
+        TwoSubGroups twoSubGroups = studentService.getTwoSubGroups();
+        req.setAttribute("firstGroup", twoSubGroups.getFirstSubGroup());
+        req.setAttribute("secondGroup", twoSubGroups.getSecondSubGroup());
+        RequestDispatcher requestDispatcher = req.getRequestDispatcher("welcome-page.jsp");
         requestDispatcher.forward(req, resp);
     }
 }

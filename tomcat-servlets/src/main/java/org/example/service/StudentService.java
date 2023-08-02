@@ -1,6 +1,7 @@
 package org.example.service;
 
 import lombok.SneakyThrows;
+import org.example.DTO.TwoSubGroups;
 import org.example.DTO.TwoSubGroupsAndTwoPeopleDTO;
 import org.example.model.Point;
 import org.example.model.Student;
@@ -27,6 +28,10 @@ public class StudentService {
         ResultSet studentsByGroup2 = jdbcStudentRepository.getStudentsByGroup(2);
         firstSubGroup = mapResultSetToStudents(studentsByGroup1);
         secondSubGroup = mapResultSetToStudents(studentsByGroup2);
+    }
+
+    public TwoSubGroups getTwoSubGroups() {
+        return new TwoSubGroups(firstSubGroup, secondSubGroup);
     }
 
     public TwoSubGroupsAndTwoPeopleDTO getPairOfStudent() {
@@ -61,12 +66,11 @@ public class StudentService {
             String name = resultSet.getString("name");
             int anInt = resultSet.getInt("number_of_group");
             int previousOpponent = resultSet.getInt("previous_opponent");
-            ResultSet pointsOfUser = jdbcPointsRepository.getPointsOfUser(id);
-            LinkedList<Point> points = mapResultSetToPoints(pointsOfUser);
-            Student student = new Student(name, anInt);
-            student.setId(id);
+//            ResultSet pointsOfUser = jdbcPointsRepository.getPointsOfUser(id);
+//            LinkedList<Point> points = mapResultSetToPoints(pointsOfUser);
+            Student student = new Student(name, anInt, id);
             student.setPreviousOpponent(previousOpponent);
-            student.setPoints(points);
+//            student.setPoints(points);
             students.add(student);
         }
         return students;
@@ -81,6 +85,17 @@ public class StudentService {
             points.add(new Point(localDate.toLocalDate(), score));
         }
         return points;
+    }
+
+    public void deleteByName(String name) {
+        firstSubGroup.removeIf(x -> x.getName().equals(name));
+        secondSubGroup.removeIf(x -> x.getName().equals(name));
+    }
+
+    public Student getStudentByName(String name) {
+        ResultSet studentByName = jdbcStudentRepository.getStudentByName(name);
+        List<Student> students = mapResultSetToStudents(studentByName);
+        return students.get(0);
     }
 
 }

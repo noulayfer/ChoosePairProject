@@ -18,10 +18,16 @@ public class Student {
     private final JdbcStudentRepository jdbcStudentRepository = new JdbcStudentRepository();
 
     public Student(String name, int numberOfGroup) {
-        int numberOfRaws = jdbcStudentRepository.getNumberOfRaws();
-        id = ++numberOfRaws;
+//        int numberOfRaws = jdbcStudentRepository.getNumberOfRaws();
+//        id = ++numberOfRaws;
         this.name = name;
         this.numberOfGroup = numberOfGroup;
+    }
+
+    public Student(String name, int numberOfGroup, int id) {
+        this.name = name;
+        this.numberOfGroup = numberOfGroup;
+        this.id = id;
     }
 
     public void addPoint(Point point) {
