@@ -27,6 +27,7 @@ public class ChoosePair extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
         TwoSubGroupsAndTwoPeopleDTO dto = studentService.getPairOfStudent();
         List<Student> pairOfStudent = dto.getPairOfStudent();
         List<Student> firstSubGroup = dto.getFirstSubGroup();
@@ -37,13 +38,14 @@ public class ChoosePair extends HttpServlet {
         req.setAttribute("firstGroup", firstSubGroup);
         req.setAttribute("secondGroup", secondSubGroup);
 
-        if (firstSubGroup.isEmpty() || secondSubGroup.isEmpty()) {
-            double averageMarkOne = studentService.getAverageMark(1);
-            double averageMarkTwo = studentService.getAverageMark(2);
-
-            req.setAttribute("markOne", averageMarkOne);
-            req.setAttribute("markTwo", averageMarkTwo);
-        }
+//        if (firstSubGroup.isEmpty() || secondSubGroup.isEmpty()) {
+//
+//            double averageMarkOne = studentService.getAverageMark(1);
+//            double averageMarkTwo = studentService.getAverageMark(2);
+//
+//            req.setAttribute("markOne", averageMarkOne);
+//            req.setAttribute("markTwo", averageMarkTwo);
+//        }
 
         RequestDispatcher requestDispatcher = req.getRequestDispatcher("welcome-page.jsp");
         requestDispatcher.forward(req, resp);

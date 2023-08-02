@@ -54,6 +54,9 @@ public class AddPoints extends HttpServlet {
         List<Student> pairOfStudent = studentService.getLastPair();
         List<Student> firstSubGroup = studentService.getFirstSubGroup();
         List<Student> secondSubGroup = studentService.getSecondSubGroup();
+
+        req.setAttribute("firstScore", pairOfStudent.get(0).getPoints().peekLast().getScore());
+        req.setAttribute("secondScore", pairOfStudent.get(1).getPoints().peekLast().getScore());
         req.setAttribute("firstStudent", pairOfStudent.get(0));
         req.setAttribute("secondStudent", pairOfStudent.get(1));
         req.setAttribute("firstGroup", firstSubGroup);

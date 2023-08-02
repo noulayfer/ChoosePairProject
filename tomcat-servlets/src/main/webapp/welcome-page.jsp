@@ -25,6 +25,7 @@
             <input type="hidden" name="name" value="${firstStudent.name}" />
             <input type="submit" value="Add Score" />
         </form>
+        <h3>${firstScore}</h3>
     </div>
 
     <!-- Right Subgroup List -->
@@ -45,6 +46,7 @@
             <input type="hidden" name="name" value="${secondStudent.name}" />
             <input type="submit" value="Add Score" />
         </form>
+        <h3>${secondScore}</h3>
     </div>
 </div>
 

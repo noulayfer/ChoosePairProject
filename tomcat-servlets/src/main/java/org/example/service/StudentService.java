@@ -57,13 +57,17 @@ public class StudentService {
 
     public TwoSubGroupsAndTwoPeopleDTO getPairOfStudent() {
         if (!lastPair.isEmpty()) {
-            System.out.println(lastPair.get(0));
-            System.out.println(lastPair.get(1));
             groupOneCounter += lastPair.get(0).getPoints().peekLast().getScore();
             groupTwoCounter += lastPair.get(1).getPoints().peekLast().getScore();
         }
         Student student1 = choosePersonFirstGroup();
+        LinkedList<Point> pointsOne = new LinkedList<>();
+        pointsOne.add(new Point(0));
+        student1.setPoints(pointsOne);
         Student student2 = choosePersonSecondGroup();
+        LinkedList<Point> pointsTwo = new LinkedList<>();
+        pointsTwo.add(new Point(0));
+        student2.setPoints(pointsTwo);
 
 //        while (student1.getPreviousOpponent() != student2.getId()) {
 //            student2 = choosePersonSecondGroup();
