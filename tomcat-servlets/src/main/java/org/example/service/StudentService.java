@@ -64,7 +64,6 @@ public class StudentService {
             ResultSet pointsOfUser = jdbcPointsRepository.getPointsOfUser(id);
             LinkedList<Point> points = mapResultSetToPoints(pointsOfUser);
             Student student = new Student(name, anInt);
-
             student.setId(id);
             student.setPreviousOpponent(previousOpponent);
             student.setPoints(points);
