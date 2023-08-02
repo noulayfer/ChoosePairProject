@@ -60,12 +60,13 @@ public class StudentService {
             int id = resultSet.getInt("id");
             String name = resultSet.getString("name");
             int anInt = resultSet.getInt("number_of_group");
-            long previousOpponent = resultSet.getLong("previous_opponent");
+            int previousOpponent = resultSet.getInt("previous_opponent");
             ResultSet pointsOfUser = jdbcPointsRepository.getPointsOfUser(id);
             LinkedList<Point> points = mapResultSetToPoints(pointsOfUser);
             Student student = new Student(name, anInt);
+
             student.setId(id);
-            student.setPreviousOpponent((int) previousOpponent);
+            student.setPreviousOpponent(previousOpponent);
             student.setPoints(points);
             students.add(student);
         }
