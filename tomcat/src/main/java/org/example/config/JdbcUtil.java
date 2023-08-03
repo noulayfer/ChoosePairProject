@@ -10,9 +10,7 @@ import java.util.Properties;
 
 public class JdbcUtil {
     private static String databaseURL;
-
     private static String username;
-
 
     public static Connection getConnection() {
         initDB();
@@ -30,10 +28,12 @@ public class JdbcUtil {
         ClassLoader classLoader = JdbcUtil.class.getClassLoader();
         try (final InputStream resourceAsStream = classLoader.getResourceAsStream(configFile)) {
             final Properties properties = new Properties();
+
             if (resourceAsStream == null) {
                 System.out.println("Config file '" + configFile + "' not found in resources.");
                 return;
             }
+
             properties.load(resourceAsStream);
             databaseURL = properties.getProperty("db_url");
             username = properties.getProperty("db_user");
@@ -41,6 +41,7 @@ public class JdbcUtil {
             e.printStackTrace();
             return;
         }
+
         try {
             String jdbcDriver = "org.postgresql.Driver";
             Class.forName(jdbcDriver);

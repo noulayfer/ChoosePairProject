@@ -11,10 +11,15 @@ import java.util.LinkedList;
 @Setter
 public class Student {
     private int id;
+
     private String name;
+
     private int numberOfGroup;
+
     private int previousOpponent;
+
     private final JdbcStudentRepository jdbcStudentRepository = new JdbcStudentRepository();
+
     private double mark;
 
     public Student(String name, int numberOfGroup) {

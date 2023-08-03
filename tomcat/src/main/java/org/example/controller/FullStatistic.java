@@ -29,10 +29,13 @@ public class FullStatistic extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         TwoSubGroups twoSubGroups = studentService.showFullStat();
+
         List<Student> firstSubGroup = twoSubGroups.getFirstSubGroup();
         List<Student> secondSubGroup = twoSubGroups.getSecondSubGroup();
+
         req.setAttribute("secondGroup", secondSubGroup);
         req.setAttribute("firstGroup", firstSubGroup);
+
         RequestDispatcher requestDispatcher = req.getRequestDispatcher("statistic.jsp");
         requestDispatcher.forward(req, resp);
     }

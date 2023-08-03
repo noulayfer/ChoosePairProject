@@ -14,8 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name="updateScore", value = "/update-score")
-public class AddPoints extends HttpServlet {
+@WebServlet(name = "StealPoint", value = "/steal-point")
+public class StealPoint extends HttpServlet {
     private StudentService studentService;
 
     @Override
@@ -27,14 +27,21 @@ public class AddPoints extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String name = req.getParameter("name");
+
         if (name == null || name.isEmpty()) {
-            resp.sendRedirect("/tomcat/average");
+            resp.sendRedirect("/tomcat/students");
             return;
         }
+
         Student studentByName = studentService.getStudentFromList(name);
         double mark = studentByName.getMark();
-        studentByName.setMark(++mark);
+
+        if (mark > 0) {
+        studentByName.setMark(--mark);
+        }
+
         req.setAttribute("score", mark);
+
         List<Student> pairOfStudent = studentService.getLastPair();
         List<Student> firstSubGroup = studentService.getFirstSubGroup();
         List<Student> secondSubGroup = studentService.getSecondSubGroup();
@@ -45,6 +52,7 @@ public class AddPoints extends HttpServlet {
         req.setAttribute("secondStudent", pairOfStudent.get(1));
         req.setAttribute("firstGroup", firstSubGroup);
         req.setAttribute("secondGroup", secondSubGroup);
+
         RequestDispatcher requestDispatcher = req.getRequestDispatcher("welcome-page.jsp");
         requestDispatcher.forward(req, resp);
     }

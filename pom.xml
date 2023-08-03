@@ -9,7 +9,7 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
-        <module>tomcat-servlets</module>
+        <module>tomcat</module>
     </modules>
 
     <properties>
@@ -62,7 +62,7 @@
                 <version>3.3.2</version>
                 <configuration>
                     <warSourceDirectory>src/main/webapp</warSourceDirectory>
-                    <warName>tomcat-servlets</warName>
+                    <warName>tomcat</warName>
                     <webXml>src/main/webapp/WEB-INF/web.xml</webXml>
                 </configuration>
             </plugin>
