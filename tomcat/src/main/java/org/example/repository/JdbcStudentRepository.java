@@ -22,6 +22,7 @@ public class JdbcStudentRepository {
                         ");"
         ).executeUpdate();
     }
+
     @SneakyThrows
     public ResultSet getStudentsByGroup(int numberOfGroup) {
         Connection connection = JdbcUtil.getConnection();
@@ -40,5 +41,16 @@ public class JdbcStudentRepository {
         preparedStatement.setString(1, name);
         ResultSet resultSet = preparedStatement.executeQuery();
         return resultSet;
+    }
+
+    @SneakyThrows
+    public void updateStudent(int id, double mark, int previousOpponent) {
+        Connection connection = JdbcUtil.getConnection();
+        String sqlRequest = "UPDATE Students SET mark = ?, previous_opponent = ? WHERE id = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest);
+        preparedStatement.setDouble(1, mark);
+        preparedStatement.setInt(2, previousOpponent);
+        preparedStatement.setInt(3, id);
+        preparedStatement.executeUpdate();
     }
 }

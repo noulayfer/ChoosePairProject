@@ -22,8 +22,8 @@ public class StudentService {
     private static StudentService STUDENT_SERVICE;
 
 
-    int groupOneCounter = 0;
-    int groupTwoCounter = 0;
+    double groupOneCounter = 0.0;
+    double groupTwoCounter = 0.0;
     int studentsFromFirstGroup = 0;
     int studentsFromSecondGroup = 0;
 
@@ -52,9 +52,16 @@ public class StudentService {
 
     public TwoSubGroupsAndTwoPeopleDTO getPairOfStudent() {
         if (!lastPair.isEmpty()) {
-            groupOneCounter += lastPair.get(0).getMark();
-            groupTwoCounter += lastPair.get(1).getMark();
+            Student student1 = lastPair.get(0);
+            Student student2 = lastPair.get(1);
+
+            groupOneCounter += student1.getMark();
+            groupTwoCounter += student2.getMark();
+
+            jdbcStudentRepository.updateStudent(student1.getId(), student1.getMark(), student2.getId());
+            jdbcStudentRepository.updateStudent(student2.getId(), student2.getMark(), student1.getId());
         }
+
         Student student1 = choosePersonFirstGroup();
         Student student2 = choosePersonSecondGroup();
 
