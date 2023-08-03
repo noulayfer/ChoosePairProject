@@ -80,9 +80,9 @@
     <input type="submit" value="Average Mark &udarr;" />
 </form>
 
-<h3>${markOne}</h3>
-<br/>
-<h3>${markTwo}</h3>
+<h3>${markOne} ${markTwo}</h3>
+
+<h3></h3>
 
 <form action="/tomcat/stat" method="get" class="button-form">
     <input type="submit" value="&telrec; Full statistic" />

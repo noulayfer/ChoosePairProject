@@ -32,9 +32,12 @@ public class FullStatistic extends HttpServlet {
 
         List<Student> firstSubGroup = twoSubGroups.getFirstSubGroup();
         List<Student> secondSubGroup = twoSubGroups.getSecondSubGroup();
-
+        var firstAverage= studentService.getAverageMark(1);
+        var secondAverage= studentService.getAverageMark(2);
         req.setAttribute("secondGroup", secondSubGroup);
         req.setAttribute("firstGroup", firstSubGroup);
+        req.setAttribute("firstAverage", "First Group: " + firstAverage);
+        req.setAttribute("secondAverage", "Second Group: " + secondAverage);
 
         RequestDispatcher requestDispatcher = req.getRequestDispatcher("statistic.jsp");
         requestDispatcher.forward(req, resp);

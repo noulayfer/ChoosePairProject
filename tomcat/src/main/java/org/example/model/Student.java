@@ -1,6 +1,7 @@
 package org.example.model;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.repository.JdbcStudentRepository;
 
@@ -9,6 +10,7 @@ import java.util.LinkedList;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class Student {
     private int id;
 

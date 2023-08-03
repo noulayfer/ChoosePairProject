@@ -43,6 +43,9 @@ public class StudentService {
         ResultSet studentsByGroup2 = jdbcStudentRepository.getStudentsByGroup(2);
         firstSubGroup = mapResultSetToStudents(studentsByGroup1);
         secondSubGroup = mapResultSetToStudents(studentsByGroup2);
+
+        firstSubGroup.forEach(st -> st.setMark(0));
+        secondSubGroup.forEach(st -> st.setMark(0));
         lastPair = new ArrayList<>();
     }
 
@@ -55,11 +58,15 @@ public class StudentService {
             Student student1 = lastPair.get(0);
             Student student2 = lastPair.get(1);
 
+
             groupOneCounter += student1.getMark();
             groupTwoCounter += student2.getMark();
 
             jdbcStudentRepository.updateStudent(student1.getId(), student1.getMark(), student2.getId());
             jdbcStudentRepository.updateStudent(student2.getId(), student2.getMark(), student1.getId());
+
+//            var st = jdbcStudentRepository.getStudentById(student1.getId());
+//            System.out.println("st = " + st);
         }
 
         Student student1 = choosePersonFirstGroup();
@@ -132,10 +139,12 @@ public class StudentService {
         return student;
     }
 
-    //TODO not working while do not create 5 pairs
     public double getAverageMark(int groupNumber) {
-        return groupNumber == 1 ? (groupOneCounter + lastPair.get(0).getMark()) / studentsFromFirstGroup :
-                (groupTwoCounter + lastPair.get(1).getMark()) / studentsFromSecondGroup;
+        return groupNumber == 1 ? groupOneCounter / studentsFromFirstGroup :
+                groupTwoCounter / studentsFromSecondGroup;
+
+//        return groupNumber == 1 ? (groupOneCounter + lastPair.get(0).getMark()) / studentsFromFirstGroup :
+//                (groupTwoCounter + lastPair.get(1).getMark()) / studentsFromSecondGroup;
     }
 
     public TwoSubGroups showFullStat() {

@@ -27,8 +27,8 @@ public class AverageMark extends HttpServlet {
         double averageMark1 = studentService.getAverageMark(1);
         double averageMark2 = studentService.getAverageMark(2);
 
-        req.setAttribute("markOne", averageMark1);
-        req.setAttribute("markTwo", averageMark2);
+        req.setAttribute("markOne", "First Group: " + averageMark1);
+        req.setAttribute("markTwo", "   /   Second Group: " + averageMark2);
 
         RequestDispatcher requestDispatcher = req.getRequestDispatcher("welcome-page.jsp");
         requestDispatcher.forward(req, resp);

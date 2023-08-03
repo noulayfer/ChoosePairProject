@@ -2,6 +2,7 @@ package org.example.repository;
 
 import lombok.SneakyThrows;
 import org.example.config.JdbcUtil;
+import org.example.model.Student;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -46,11 +47,30 @@ public class JdbcStudentRepository {
     @SneakyThrows
     public void updateStudent(int id, double mark, int previousOpponent) {
         Connection connection = JdbcUtil.getConnection();
-        String sqlRequest = "UPDATE Students SET mark = ?, previous_opponent = ? WHERE id = ?";
+        String sqlRequest = "UPDATE Student SET mark=?, previous_opponent=? WHERE id=?";
         PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest);
         preparedStatement.setDouble(1, mark);
         preparedStatement.setInt(2, previousOpponent);
         preparedStatement.setInt(3, id);
         preparedStatement.executeUpdate();
     }
+
+    @SneakyThrows
+    public Student getStudentById(int id) {
+        Connection connection = JdbcUtil.getConnection();
+        String sqlRequest = "SELECT * FROM Student WHERE id = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest);
+        preparedStatement.setInt(1, id);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        resultSet.next();
+        Student student = new Student();
+        student.setId(resultSet.getInt("id"));
+        student.setName(resultSet.getString("name"));
+        student.setNumberOfGroup(resultSet.getInt("number_of_group"));
+        student.setPreviousOpponent(resultSet.getInt("previous_opponent"));
+        student.setMark(resultSet.getDouble("mark"));
+        return student;
+    }
+
+
 }

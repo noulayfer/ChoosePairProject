@@ -14,14 +14,15 @@
 </header>
 <h1>Student Statistic</h1>
 
-<h2>First Subgroup</h2>
+<h3>${firstAverage}</h3>
 <ul>
     <c:forEach var="student" items="${firstGroup}">
         <li>${student.name} - ${student.getMark()}</li>
     </c:forEach>
 </ul>
 
-<h2>Second Subgroup</h2>
+
+<h3>${secondAverage}</h3>
 <ul>
     <c:forEach var="student" items="${secondGroup}">
         <li>${student.name} - ${student.getMark()}</li>
