@@ -17,20 +17,11 @@ public class JdbcStudentRepository {
                         "    id INT PRIMARY KEY," +
                         "    name VARCHAR(255) NOT NULL," +
                         "    number_of_group INTEGER NOT NULL," +
-                        "    previous_opponent INTEGER" +
+                        "    previous_opponent INTEGER," +
+                        "    mark DOUBLE" +
                         ");"
         ).executeUpdate();
     }
-    @SneakyThrows
-    public int getNumberOfRaws() {
-        Connection connection = JdbcUtil.getConnection();
-        String sqlRequest = "SELECT COUNT(*) FROM Student";
-        PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest);
-        ResultSet resultSet = preparedStatement.executeQuery();
-        int amountOfRaws = resultSet.getInt(1);
-        return amountOfRaws;
-    }
-
     @SneakyThrows
     public ResultSet getStudentsByGroup(int numberOfGroup) {
         Connection connection = JdbcUtil.getConnection();

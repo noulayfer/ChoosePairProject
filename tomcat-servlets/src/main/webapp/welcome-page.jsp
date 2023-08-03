@@ -2,61 +2,91 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <link href='http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css' rel='stylesheet' type='text/css'>
     <title>Welcome Page</title>
 </head>
 <body>
 <h1>Welcome to the Subgroups Page</h1>
 
+
 <div style="display: flex;">
-    <!-- Left Subgroup List -->
-    <div style="flex: 1; border: 1px solid #ccc; padding: 10px;">
-        <h2>Left Subgroup</h2>
+    <div class="subgroup">
+        <h2>Left group</h2>
         <ul>
             <c:forEach var="member" items="${firstGroup}">
-                <li>${member.name}</li>
+                <li>
+                    <span>${member.name}</span>
+                    <div class="button-container">
+                    <form action="/tomcat/delete-student" method="post" class="button-delete">
+                        <input type="hidden" name="name" value="${member.name}" />
+                        <button type="submit">&cross;</button>
+                    </form>
+                    </div>
+                </li>
             </c:forEach>
         </ul>
-        <h2>First Student</h2>
-        <p>${firstStudent.name}</p>
-        <!-- Add other student details as needed -->
 
-        <!-- Form to add score for the firstStudent -->
-        <form action="/tomcat/update-score" method="post">
+        <h4>First Student</h4>
+        <p>${firstStudent.name}</p>
+
+        <form action="/tomcat/update-score" method="post" class="button-form">
             <input type="hidden" name="name" value="${firstStudent.name}" />
-            <input type="submit" value="Add Score" />
+            <input type="submit" value="&plus; Add point" />
+        </form>
+        <form action="/tomcat/steal-point" method="post" class="button-form">
+            <input type="hidden" name="name" value="${firstStudent.name}" />
+            <input type="submit" value="&minus; Steal point" />
         </form>
         <h3>${firstScore}</h3>
     </div>
 
-    <!-- Right Subgroup List -->
-    <div style="flex: 1; border: 1px solid #ccc; padding: 10px;">
-        <h2>Right Subgroup</h2>
+    <div class="subgroup">
+        <h2>Right group</h2>
         <ul>
             <c:forEach var="member" items="${secondGroup}">
-                <li>${member.name}</li>
+                <li>
+                <span>${member.name}</span>
+                <div class="button-container">
+                    <form action="/tomcat/delete-student" method="post" class="button-delete">
+                        <input type="hidden" name="name" value="${member.name}" />
+                        <button type="submit">&cross;</button>
+                    </form>
+                </div>
+                </li>
             </c:forEach>
         </ul>
-        <h2>Second Student</h2>
+        <h4>Second Student</h4>
         <p>${secondStudent.name}</p>
 
-        <!-- Add other student details as needed -->
 
-        <!-- Form to add score for the secondStudent -->
-        <form action="/tomcat/update-score" method="post">
+        <form action="/tomcat/update-score" method="post" class="button-form">
             <input type="hidden" name="name" value="${secondStudent.name}" />
-            <input type="submit" value="Add Score" />
+            <input type="submit" value="&plus; Add point" />
+        </form>
+        <form action="/tomcat/steal-point" method="post" class="button-form">
+            <input type="hidden" name="name" value="${secondStudent.name}" />
+            <input type="submit" value="&minus; Steal point" />
         </form>
         <h3>${secondScore}</h3>
     </div>
 </div>
 
-<form action="/tomcat/create-pair" method="get">
-            <input type="submit" value="Create Pair" />
+<form action="/tomcat/create-pair" method="get" class="button-form">
+            <input type="submit" value="Create Pair &cularr;" />
+</form>
+
+<form action="/tomcat/average" method="get" class="button-form">
+    <input type="submit" value="Average Mark &udarr;" />
 </form>
 
 <h3>${markOne}</h3>
 <br/>
 <h3>${markTwo}</h3>
+
+<form action="/tomcat/stat" method="get" class="button-form">
+    <input type="submit" value="&telrec; Full statistic" />
+</form>
 
 </body>
 </html>

@@ -14,8 +14,8 @@ public class Student {
     private String name;
     private int numberOfGroup;
     private int previousOpponent;
-    private LinkedList<Point> points = new LinkedList<>();
     private final JdbcStudentRepository jdbcStudentRepository = new JdbcStudentRepository();
+    private double mark;
 
     public Student(String name, int numberOfGroup) {
 //        int numberOfRaws = jdbcStudentRepository.getNumberOfRaws();
@@ -30,11 +30,4 @@ public class Student {
         this.id = id;
     }
 
-    public void addPoint(Point point) {
-        points.push(point);
-    }
-
-    public Point getLastPoint() {
-        return points.peek();
-    }
 }

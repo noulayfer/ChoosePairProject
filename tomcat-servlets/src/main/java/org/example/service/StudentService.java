@@ -4,12 +4,9 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import org.example.DTO.TwoSubGroups;
 import org.example.DTO.TwoSubGroupsAndTwoPeopleDTO;
-import org.example.model.Point;
 import org.example.model.Student;
-import org.example.repository.JdbcPointsRepository;
 import org.example.repository.JdbcStudentRepository;
 
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -21,7 +18,6 @@ public class StudentService {
     JdbcStudentRepository jdbcStudentRepository;
     List<Student> firstSubGroup;
     List<Student> secondSubGroup;
-    JdbcPointsRepository jdbcPointsRepository;
     List<Student> lastPair;
     private static StudentService STUDENT_SERVICE;
 
@@ -43,7 +39,6 @@ public class StudentService {
 
     private StudentService(JdbcStudentRepository jdbcStudentRepository) {
         this.jdbcStudentRepository = new JdbcStudentRepository();
-        jdbcPointsRepository = new JdbcPointsRepository();
         ResultSet studentsByGroup1 = jdbcStudentRepository.getStudentsByGroup(1);
         ResultSet studentsByGroup2 = jdbcStudentRepository.getStudentsByGroup(2);
         firstSubGroup = mapResultSetToStudents(studentsByGroup1);
@@ -57,21 +52,15 @@ public class StudentService {
 
     public TwoSubGroupsAndTwoPeopleDTO getPairOfStudent() {
         if (!lastPair.isEmpty()) {
-            groupOneCounter += lastPair.get(0).getPoints().peekLast().getScore();
-            groupTwoCounter += lastPair.get(1).getPoints().peekLast().getScore();
+            groupOneCounter += lastPair.get(0).getMark();
+            groupTwoCounter += lastPair.get(1).getMark();
         }
         Student student1 = choosePersonFirstGroup();
-        LinkedList<Point> pointsOne = new LinkedList<>();
-        pointsOne.add(new Point(0));
-        student1.setPoints(pointsOne);
         Student student2 = choosePersonSecondGroup();
-        LinkedList<Point> pointsTwo = new LinkedList<>();
-        pointsTwo.add(new Point(0));
-        student2.setPoints(pointsTwo);
 
-//        while (student1.getPreviousOpponent() != student2.getId()) {
-//            student2 = choosePersonSecondGroup();
-//        }
+        while (student1.getPreviousOpponent() == student2.getId()) {
+            student2 = choosePersonSecondGroup();
+       }
 
 
         firstSubGroup.remove(student1);
@@ -87,12 +76,18 @@ public class StudentService {
 
     public Student choosePersonFirstGroup() {
         Random random = new Random();
+        if (firstSubGroup.size() == 0) {
+            throw new IllegalStateException("first group is empty");
+        }
         int i = random.nextInt(firstSubGroup.size());
         return firstSubGroup.get(i);
     }
 
     public Student choosePersonSecondGroup() {
         Random random = new Random();
+        if (secondSubGroup.size() == 0) {
+            throw new IllegalStateException("second group is empty");
+        }
         int i = random.nextInt(secondSubGroup.size());
         return secondSubGroup.get(i);
     }
@@ -105,25 +100,13 @@ public class StudentService {
             String name = resultSet.getString("name");
             int anInt = resultSet.getInt("number_of_group");
             int previousOpponent = resultSet.getInt("previous_opponent");
-//            ResultSet pointsOfUser = jdbcPointsRepository.getPointsOfUser(id);
-//            LinkedList<Point> points = mapResultSetToPoints(pointsOfUser);
+            double mark = resultSet.getDouble("mark");
             Student student = new Student(name, anInt, id);
+            student.setMark(mark);
             student.setPreviousOpponent(previousOpponent);
-//            student.setPoints(points);
             students.add(student);
         }
         return students;
-    }
-
-    @SneakyThrows
-    public LinkedList<Point> mapResultSetToPoints(ResultSet resultSet) {
-        LinkedList<Point> points = new LinkedList<>();
-        while (resultSet.next()) {
-            Date localDate = resultSet.getDate("localDate");
-            double score = resultSet.getDouble("score");
-            points.add(new Point(localDate.toLocalDate(), score));
-        }
-        return points;
     }
 
     public void deleteByName(String name) {
@@ -142,7 +125,17 @@ public class StudentService {
         return student;
     }
 
+    //TODO not working while do not create 5 pairs
     public double getAverageMark(int groupNumber) {
-        return groupNumber == 1 ? (double) groupOneCounter / studentsFromFirstGroup : (double) groupTwoCounter / studentsFromSecondGroup;
+        return groupNumber == 1 ? (groupOneCounter + lastPair.get(0).getMark()) / studentsFromFirstGroup :
+                (groupTwoCounter + lastPair.get(1).getMark()) / studentsFromSecondGroup;
+    }
+
+    public TwoSubGroups showFullStat() {
+        ResultSet studentsByGroup1 = jdbcStudentRepository.getStudentsByGroup(1);
+        ResultSet studentsByGroup2 = jdbcStudentRepository.getStudentsByGroup(2);
+        List<Student> students1 = mapResultSetToStudents(studentsByGroup1);
+        List<Student> students2 = mapResultSetToStudents(studentsByGroup2);
+        return new TwoSubGroups(students1, students2);
     }
 }
