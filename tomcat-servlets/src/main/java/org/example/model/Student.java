@@ -14,21 +14,20 @@ public class Student {
     private String name;
     private int numberOfGroup;
     private int previousOpponent;
-    private LinkedList<Point> points = new LinkedList<>();
     private final JdbcStudentRepository jdbcStudentRepository = new JdbcStudentRepository();
+    private double mark;
 
     public Student(String name, int numberOfGroup) {
-        int numberOfRaws = jdbcStudentRepository.getNumberOfRaws();
-        id = ++numberOfRaws;
+//        int numberOfRaws = jdbcStudentRepository.getNumberOfRaws();
+//        id = ++numberOfRaws;
         this.name = name;
         this.numberOfGroup = numberOfGroup;
     }
 
-    public void addPoint(Point point) {
-        points.push(point);
+    public Student(String name, int numberOfGroup, int id) {
+        this.name = name;
+        this.numberOfGroup = numberOfGroup;
+        this.id = id;
     }
 
-    public Point getLastPoint() {
-        return points.peek();
-    }
 }

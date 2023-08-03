@@ -14,30 +14,30 @@ public class JdbcStudentRepository {
         Connection connection = JdbcUtil.getConnection();
         connection.prepareStatement(
                 "CREATE TABLE IF NOT EXISTS Student (" +
-                        "    id PRIMARY KEY," +
+                        "    id INT PRIMARY KEY," +
                         "    name VARCHAR(255) NOT NULL," +
                         "    number_of_group INTEGER NOT NULL," +
                         "    previous_opponent INTEGER," +
-                        "    id REFERENCES \"Points\"(user_id)" +
+                        "    mark DOUBLE" +
                         ");"
         ).executeUpdate();
     }
     @SneakyThrows
-    public int getNumberOfRaws() {
+    public ResultSet getStudentsByGroup(int numberOfGroup) {
         Connection connection = JdbcUtil.getConnection();
-        String sqlRequest = "SELECT COUNT(*) FROM \"Students\"";
+        String sqlRequest = "SELECT * FROM Student WHERE number_of_group = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest);
+        preparedStatement.setInt(1, numberOfGroup);
         ResultSet resultSet = preparedStatement.executeQuery();
-        int amountOfRaws = resultSet.getInt(1);
-        return amountOfRaws;
+        return resultSet;
     }
 
     @SneakyThrows
-    public ResultSet getStudentsByGroup(int numberOfGroup) {
+    public ResultSet getStudentByName(String name) {
         Connection connection = JdbcUtil.getConnection();
-        String sqlRequest = "SELECT * FROM \"Students\" WHERE numberOfGroup = ?";
-        PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest);
-        preparedStatement.setInt(1, numberOfGroup);
+        String sql = "SELECT * FROM Student WHERE name = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setString(1, name);
         ResultSet resultSet = preparedStatement.executeQuery();
         return resultSet;
     }

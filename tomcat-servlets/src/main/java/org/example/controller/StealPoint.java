@@ -1,6 +1,5 @@
 package org.example.controller;
 
-import org.example.DTO.TwoSubGroupsAndTwoPeopleDTO;
 import org.example.model.Student;
 import org.example.repository.JdbcStudentRepository;
 import org.example.service.StudentService;
@@ -14,9 +13,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
-//TODO Also we do not add student opponent after we choose pair, so now opponent is always null.
-@WebServlet(name = "ChoosePair", value = "/create-pair")
-public class ChoosePair extends HttpServlet {
+
+@WebServlet(name = "StealPoint", value = "/steal-point")
+public class StealPoint extends HttpServlet {
+
     private StudentService studentService;
 
     @Override
@@ -24,21 +24,25 @@ public class ChoosePair extends HttpServlet {
         super.init(config);
         studentService = StudentService.getInstance(new JdbcStudentRepository());
     }
-
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        TwoSubGroupsAndTwoPeopleDTO dto;
-        try {
-            dto = studentService.getPairOfStudent();
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String name = req.getParameter("name");
+        if (name == null || name.isEmpty()) {
             resp.sendRedirect("/tomcat/students");
             return;
         }
-        List<Student> pairOfStudent = dto.getPairOfStudent();
-        List<Student> firstSubGroup = dto.getFirstSubGroup();
-        List<Student> secondSubGroup = dto.getSecondSubGroup();
+        Student studentByName = studentService.getStudentFromList(name);
+        double mark = studentByName.getMark();
+        if (mark > 0) {
+        studentByName.setMark(--mark);
+        }
+        req.setAttribute("score", mark);
+        List<Student> pairOfStudent = studentService.getLastPair();
+        List<Student> firstSubGroup = studentService.getFirstSubGroup();
+        List<Student> secondSubGroup = studentService.getSecondSubGroup();
 
+        req.setAttribute("firstScore", pairOfStudent.get(0).getMark());
+        req.setAttribute("secondScore", pairOfStudent.get(1).getMark());
         req.setAttribute("firstStudent", pairOfStudent.get(0));
         req.setAttribute("secondStudent", pairOfStudent.get(1));
         req.setAttribute("firstGroup", firstSubGroup);
