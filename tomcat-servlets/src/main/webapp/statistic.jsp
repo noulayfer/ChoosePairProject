@@ -8,7 +8,8 @@
 </head>
 <body>
 <header>
-    <form action="/tomcat/students" method="get" class="button-form">
+    <form action="/tomcat/controller" method="get" class="button-form">
+        <input type="hidden" name="command" value="students">
         <span>&larr;</span> <input type="submit" value="Back" />
     </form>
 </header>

@@ -5,35 +5,30 @@ import org.example.repository.JdbcStudentRepository;
 import org.example.service.StudentService;
 
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name="updateScore", value = "/update-score")
-public class AddPoints extends HttpServlet {
-    private StudentService studentService;
+public class StealPointCommand implements Command {
 
-    @Override
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
+    StudentService studentService;
+    public StealPointCommand() {
         studentService = StudentService.getInstance(new JdbcStudentRepository());
     }
-
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    public void execute(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String name = req.getParameter("name");
         if (name == null || name.isEmpty()) {
-            resp.sendRedirect("/tomcat/average");
+            resp.sendRedirect(req.getContextPath() + "/controller?command=students");;
             return;
         }
         Student studentByName = studentService.getStudentFromList(name);
         double mark = studentByName.getMark();
-        studentByName.setMark(++mark);
+        if (mark > 0) {
+            studentByName.setMark(--mark);
+        }
         req.setAttribute("score", mark);
         List<Student> pairOfStudent = studentService.getLastPair();
         List<Student> firstSubGroup = studentService.getFirstSubGroup();

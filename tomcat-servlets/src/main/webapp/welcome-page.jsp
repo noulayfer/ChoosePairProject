@@ -18,10 +18,11 @@
                 <li>
                     <span>${member.name}</span>
                     <div class="button-container">
-                    <form action="/tomcat/delete-student" method="post" class="button-delete">
-                        <input type="hidden" name="name" value="${member.name}" />
-                        <button type="submit">&cross;</button>
-                    </form>
+                        <form action="/tomcat/controller" method="post" class="button-delete">
+                            <input type="hidden" name="command" value="delete-student">
+                            <input type="hidden" name="studentName" value="${member.name}">
+                            <button type="submit">&cross;</button>
+                        </form>
                     </div>
                 </li>
             </c:forEach>
@@ -30,11 +31,14 @@
         <h4>First Student</h4>
         <p>${firstStudent.name}</p>
 
-        <form action="/tomcat/update-score" method="post" class="button-form">
+        <form action="/tomcat/controller" method="post" class="button-form">
+            <input type="hidden" name="command" value="add-point">
             <input type="hidden" name="name" value="${firstStudent.name}" />
             <input type="submit" value="&plus; Add point" />
         </form>
-        <form action="/tomcat/steal-point" method="post" class="button-form">
+
+        <form action="/tomcat/controller" method="post" class="button-form">
+            <input type="hidden" name="command" value="steal-point">
             <input type="hidden" name="name" value="${firstStudent.name}" />
             <input type="submit" value="&minus; Steal point" />
         </form>
@@ -48,8 +52,9 @@
                 <li>
                 <span>${member.name}</span>
                 <div class="button-container">
-                    <form action="/tomcat/delete-student" method="post" class="button-delete">
-                        <input type="hidden" name="name" value="${member.name}" />
+                    <form action="/tomcat/controller" method="post" class="button-delete">
+                        <input type="hidden" name="command" value="delete-student">
+                        <input type="hidden" name="studentName" value="${member.name}">
                         <button type="submit">&cross;</button>
                     </form>
                 </div>
@@ -60,11 +65,14 @@
         <p>${secondStudent.name}</p>
 
 
-        <form action="/tomcat/update-score" method="post" class="button-form">
+        <form action="/tomcat/controller" method="post" class="button-form">
+            <input type="hidden" name="command" value="add-point">
             <input type="hidden" name="name" value="${secondStudent.name}" />
             <input type="submit" value="&plus; Add point" />
         </form>
-        <form action="/tomcat/steal-point" method="post" class="button-form">
+
+        <form action="/tomcat/controller" method="post" class="button-form">
+            <input type="hidden" name="command" value="steal-point">
             <input type="hidden" name="name" value="${secondStudent.name}" />
             <input type="submit" value="&minus; Steal point" />
         </form>
@@ -72,21 +80,26 @@
     </div>
 </div>
 
-<form action="/tomcat/create-pair" method="get" class="button-form">
-            <input type="submit" value="Create Pair &cularr;" />
+<form action="/tomcat/controller" method="get" class="button-form">
+    <input type="hidden" name="command" value="create-pair">
+    <input type="submit" value="Create Pair &cularr;" />
 </form>
 
-<form action="/tomcat/average" method="get" class="button-form">
+<form action="/tomcat/controller" method="get" class="button-form">
+    <input type="hidden" name="command" value="average">
     <input type="submit" value="Average Mark &udarr;" />
 </form>
+
 
 <h3>${markOne}</h3>
 <br/>
 <h3>${markTwo}</h3>
 
-<form action="/tomcat/stat" method="get" class="button-form">
+<form action="/tomcat/controller" method="get" class="button-form">
+    <input type="hidden" name="command" value="stat">
     <input type="submit" value="&telrec; Full statistic" />
 </form>
+
 
 </body>
 </html>
