@@ -20,7 +20,7 @@
                     <div class="button-container">
                         <form action="/tomcat/controller" method="post" class="button-delete">
                             <input type="hidden" name="command" value="delete-student">
-                            <input type="hidden" name="studentName" value="${member.name}">
+                            <input type="hidden" name="name" value="${member.name}">
                             <button type="submit">&cross;</button>
                         </form>
                     </div>
@@ -54,7 +54,7 @@
                 <div class="button-container">
                     <form action="/tomcat/controller" method="post" class="button-delete">
                         <input type="hidden" name="command" value="delete-student">
-                        <input type="hidden" name="studentName" value="${member.name}">
+                        <input type="hidden" name="name" value="${member.name}">
                         <button type="submit">&cross;</button>
                     </form>
                 </div>
@@ -86,20 +86,31 @@
 </form>
 
 <form action="/tomcat/controller" method="get" class="button-form">
+    <input type="hidden" name="command" value="save-changes">
+    <input type="submit" value="Save Changes &swArr;" />
+</form>
+
+<form action="/tomcat/controller" method="get" class="button-form">
     <input type="hidden" name="command" value="average">
     <input type="submit" value="Average Mark &udarr;" />
 </form>
 
 
-<h3>${markOne}</h3>
+<h3><fmt:formatNumber value="${markOne}" maxFractionDigits="1" /></h3>
 <br/>
-<h3>${markTwo}</h3>
+<h3><fmt:formatNumber value="${markTwo}" maxFractionDigits="1" /></h3>
+
 
 <form action="/tomcat/controller" method="get" class="button-form">
     <input type="hidden" name="command" value="stat">
     <input type="submit" value="&telrec; Full statistic" />
 </form>
 
+<ul class="deleted-users">
+    <c:forEach var="student" items="${deletedStudents}">
+        <li>${student.name}</li>
+    </c:forEach>
+</ul>
 
 </body>
 </html>

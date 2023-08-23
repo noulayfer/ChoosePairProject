@@ -124,3 +124,32 @@ form p {
     margin-top: 15px;
 }
 
+/* Apply styles to the deleted-users list */
+/* Rest of your existing CSS rules */
+
+/* Specific selector for deleted-users list */
+body .deleted-users {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #ccc;
+    background-color: #f0f0f0;
+    width: 200px; /* You can adjust the width as needed */
+}
+
+body .deleted-users li {
+    padding: 8px;
+    border-bottom: 1px solid #ccc;
+}
+
+/* Position the list on the left side of the screen */
+body .deleted-users {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%; /* Adjust as needed */
+    overflow-y: auto;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+}
+
+

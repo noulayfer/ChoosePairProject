@@ -1,5 +1,8 @@
 package org.example.controller;
 
+import org.example.repository.JdbcStudentRepository;
+import org.example.service.StudentService;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -14,6 +17,7 @@ public class ControllerServlet extends HttpServlet {
     private final Map<String, Command> commands = new HashMap<>();
 
     public ControllerServlet() {
+        new JdbcStudentRepository().createTableIfNotExists();
         commands.put("add-point", new AddPointsCommand());
         commands.put("students", new StartPageCommand());
         commands.put("average", new AverageMarkCommand());
@@ -21,6 +25,7 @@ public class ControllerServlet extends HttpServlet {
         commands.put("delete-student", new DeleteStudentCommand());
         commands.put("stat", new FullStatisticCommand());
         commands.put("steal-point", new StealPointCommand());
+        commands.put("save-changes", new SaveChangesCommand());
     }
 
     @Override

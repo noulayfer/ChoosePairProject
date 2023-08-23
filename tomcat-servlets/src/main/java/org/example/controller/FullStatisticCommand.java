@@ -4,6 +4,7 @@ import org.example.DTO.TwoSubGroups;
 import org.example.model.Student;
 import org.example.repository.JdbcStudentRepository;
 import org.example.service.StudentService;
+import org.example.service.StudentService2;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -14,9 +15,9 @@ import java.util.List;
 
 public class FullStatisticCommand implements Command {
 
-    StudentService studentService;
+    StudentService2 studentService;
     public FullStatisticCommand() {
-        studentService = StudentService.getInstance(new JdbcStudentRepository());
+        studentService = StudentService2.getInstance();
     }
     @Override
     public void execute(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

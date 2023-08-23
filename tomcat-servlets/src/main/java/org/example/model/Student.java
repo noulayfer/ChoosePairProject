@@ -6,6 +6,7 @@ import org.example.repository.JdbcStudentRepository;
 
 import java.awt.*;
 import java.util.LinkedList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -13,13 +14,9 @@ public class Student {
     private int id;
     private String name;
     private int numberOfGroup;
-    private int previousOpponent;
-    private final JdbcStudentRepository jdbcStudentRepository = new JdbcStudentRepository();
-    private double mark;
+    private List<Battle> battles;
 
     public Student(String name, int numberOfGroup) {
-//        int numberOfRaws = jdbcStudentRepository.getNumberOfRaws();
-//        id = ++numberOfRaws;
         this.name = name;
         this.numberOfGroup = numberOfGroup;
     }

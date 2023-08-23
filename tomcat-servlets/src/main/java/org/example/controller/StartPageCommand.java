@@ -3,6 +3,7 @@ package org.example.controller;
 import org.example.DTO.TwoSubGroups;
 import org.example.repository.JdbcStudentRepository;
 import org.example.service.StudentService;
+import org.example.service.StudentService2;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -12,9 +13,9 @@ import java.io.IOException;
 
 public class StartPageCommand implements Command {
 
-    StudentService studentService;
+    StudentService2 studentService;
     public StartPageCommand() {
-        studentService = StudentService.getInstance(new JdbcStudentRepository());
+        studentService = StudentService2.getInstance();
     }
     @Override
     public void execute(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

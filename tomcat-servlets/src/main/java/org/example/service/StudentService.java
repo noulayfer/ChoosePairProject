@@ -1,15 +1,10 @@
 package org.example.service;
 
 import lombok.Getter;
-import lombok.SneakyThrows;
 import org.example.DTO.TwoSubGroups;
-import org.example.DTO.TwoSubGroupsAndTwoPeopleDTO;
 import org.example.model.Student;
 import org.example.repository.JdbcStudentRepository;
 
-import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -27,9 +22,9 @@ public class StudentService {
     int studentsFromFirstGroup = 0;
     int studentsFromSecondGroup = 0;
 
-    public static StudentService getInstance(JdbcStudentRepository jdbcStudentRepository) {
+    public static StudentService getInstance() {
         if (STUDENT_SERVICE == null) {
-            STUDENT_SERVICE = new StudentService(jdbcStudentRepository);
+            STUDENT_SERVICE = new StudentService();
             return STUDENT_SERVICE;
         } else {
             return STUDENT_SERVICE;
@@ -37,48 +32,48 @@ public class StudentService {
     }
 
 
-    private StudentService(JdbcStudentRepository jdbcStudentRepository) {
-        this.jdbcStudentRepository = new JdbcStudentRepository();
-        ResultSet studentsByGroup1 = jdbcStudentRepository.getStudentsByGroup(1);
-        ResultSet studentsByGroup2 = jdbcStudentRepository.getStudentsByGroup(2);
-        firstSubGroup = mapResultSetToStudents(studentsByGroup1);
-        secondSubGroup = mapResultSetToStudents(studentsByGroup2);
-        lastPair = new ArrayList<>();
-    }
+//    private StudentService(JdbcStudentRepository jdbcStudentRepository) {
+//        this.jdbcStudentRepository = new JdbcStudentRepository();
+//        ResultSet studentsByGroup1 = jdbcStudentRepository.getStudentsByGroup(1);
+//        ResultSet studentsByGroup2 = jdbcStudentRepository.getStudentsByGroup(2);
+//        firstSubGroup = mapResultSetToStudents(studentsByGroup1);
+//        secondSubGroup = mapResultSetToStudents(studentsByGroup2);
+//        lastPair = new ArrayList<>();
+//    }
 
     public TwoSubGroups getTwoSubGroups() {
         return new TwoSubGroups(firstSubGroup, secondSubGroup);
     }
 
-    public TwoSubGroupsAndTwoPeopleDTO getPairOfStudent() {
-        if (!lastPair.isEmpty()) {
-            Student student1 = lastPair.get(0);
-            Student student2 = lastPair.get(1);
-            groupOneCounter += student1.getMark();
-            groupTwoCounter += student2.getMark();
+//    public TwoSubGroupsAndTwoPeopleDTO getPairOfStudent() {
+//        if (!lastPair.isEmpty()) {
+//            Student student1 = lastPair.get(0);
+//            Student student2 = lastPair.get(1);
+//            groupOneCounter += student1.getMark();
+//            groupTwoCounter += student2.getMark();
+//
+//            jdbcStudentRepository.updateStudent(student1.getId(), student1.getMark(), student2.getId());
+//            jdbcStudentRepository.updateStudent(student2.getId(), student2.getMark(), student1.getId());
+//        }
+//        Student student1 = choosePersonFirstGroup();
+//        Student student2 = choosePersonSecondGroup();
+//
+//        while (student1.getPreviousOpponent() == student2.getId()) {
+//            student2 = choosePersonSecondGroup();
+//            if (secondSubGroup.size() == 1) break;
+//       }
 
-            jdbcStudentRepository.updateStudent(student1.getId(), student1.getMark(), student2.getId());
-            jdbcStudentRepository.updateStudent(student2.getId(), student2.getMark(), student1.getId());
-        }
-        Student student1 = choosePersonFirstGroup();
-        Student student2 = choosePersonSecondGroup();
 
-        while (student1.getPreviousOpponent() == student2.getId()) {
-            student2 = choosePersonSecondGroup();
-            if (secondSubGroup.size() == 1) break;
-       }
-
-
-        firstSubGroup.remove(student1);
-        studentsFromFirstGroup += 1;
-        secondSubGroup.remove(student2);
-        studentsFromSecondGroup += 1;
-
-        lastPair = new LinkedList<>();
-        lastPair.add(student1);
-        lastPair.add(student2);
-        return new TwoSubGroupsAndTwoPeopleDTO(firstSubGroup, secondSubGroup, lastPair);
-    }
+//        firstSubGroup.remove(student1);
+//        studentsFromFirstGroup += 1;
+//        secondSubGroup.remove(student2);
+//        studentsFromSecondGroup += 1;
+//
+//        lastPair = new LinkedList<>();
+//        lastPair.add(student1);
+//        lastPair.add(student2);
+//        return new TwoSubGroupsAndTwoPeopleDTO(firstSubGroup, secondSubGroup, lastPair);
+//    }
 
     public Student choosePersonFirstGroup() {
         Random random = new Random();
@@ -98,33 +93,19 @@ public class StudentService {
         return secondSubGroup.get(i);
     }
 
-    @SneakyThrows
-    public List<Student> mapResultSetToStudents(ResultSet resultSet) {
-        List<Student> students = new ArrayList<>();
-        while(resultSet.next()) {
-            int id = resultSet.getInt("id");
-            String name = resultSet.getString("name");
-            int anInt = resultSet.getInt("number_of_group");
-            int previousOpponent = resultSet.getInt("previous_opponent");
-            double mark = resultSet.getDouble("mark");
-            Student student = new Student(name, anInt, id);
-            student.setMark(mark);
-            student.setPreviousOpponent(previousOpponent);
-            students.add(student);
-        }
-        return students;
-    }
+//
+
 
     public void deleteByName(String name) {
         firstSubGroup.removeIf(x -> x.getName().equals(name));
         secondSubGroup.removeIf(x -> x.getName().equals(name));
     }
 
-    public Student getStudentByName(String name) {
-        ResultSet studentByName = jdbcStudentRepository.getStudentByName(name);
-        List<Student> students = mapResultSetToStudents(studentByName);
-        return students.get(0);
-    }
+//    public Student getStudentByName(String name) {
+//        ResultSet studentByName = jdbcStudentRepository.getStudentByName(name);
+//        List<Student> students = mapResultSetToStudents(studentByName);
+//        return students.get(0);
+//    }
 
     public Student getStudentFromList(String name) {
         Student student = lastPair.stream().filter(x -> x.getName().equals(name)).findFirst().get();
@@ -132,16 +113,16 @@ public class StudentService {
     }
 
     //TODO not working while do not create 5 pairs
-    public double getAverageMark(int groupNumber) {
-        return groupNumber == 1 ? (groupOneCounter + lastPair.get(0).getMark()) / studentsFromFirstGroup :
-                (groupTwoCounter + lastPair.get(1).getMark()) / studentsFromSecondGroup;
-    }
-
-    public TwoSubGroups showFullStat() {
-        ResultSet studentsByGroup1 = jdbcStudentRepository.getStudentsByGroup(1);
-        ResultSet studentsByGroup2 = jdbcStudentRepository.getStudentsByGroup(2);
-        List<Student> students1 = mapResultSetToStudents(studentsByGroup1);
-        List<Student> students2 = mapResultSetToStudents(studentsByGroup2);
-        return new TwoSubGroups(students1, students2);
-    }
+//    public double getAverageMark(int groupNumber) {
+//        return groupNumber == 1 ? (groupOneCounter + lastPair.get(0).getMark()) / studentsFromFirstGroup :
+//                (groupTwoCounter + lastPair.get(1).getMark()) / studentsFromSecondGroup;
+//    }
+//
+//    public TwoSubGroups showFullStat() {
+//        ResultSet studentsByGroup1 = jdbcStudentRepository.getStudentsByGroup(1);
+//        ResultSet studentsByGroup2 = jdbcStudentRepository.getStudentsByGroup(2);
+//        List<Student> students1 = mapResultSetToStudents(studentsByGroup1);
+//        List<Student> students2 = mapResultSetToStudents(studentsByGroup2);
+//        return new TwoSubGroups(students1, students2);
+//    }
 }

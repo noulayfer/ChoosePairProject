@@ -4,8 +4,10 @@ import lombok.SneakyThrows;
 import org.example.config.JdbcUtil;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.time.LocalDate;
 
 public class JdbcStudentRepository {
 
@@ -14,11 +16,9 @@ public class JdbcStudentRepository {
         Connection connection = JdbcUtil.getConnection();
         connection.prepareStatement(
                 "CREATE TABLE IF NOT EXISTS Student (" +
-                        "    id INT PRIMARY KEY," +
+                        "    id SERIAL PRIMARY KEY," +
                         "    name VARCHAR(255) NOT NULL," +
-                        "    number_of_group INTEGER NOT NULL," +
-                        "    previous_opponent INTEGER," +
-                        "    mark DOUBLE" +
+                        "    number_of_group INTEGER NOT NULL" +
                         ");"
         ).executeUpdate();
     }
@@ -51,5 +51,16 @@ public class JdbcStudentRepository {
         preparedStatement.setString(1, name);
         ResultSet resultSet = preparedStatement.executeQuery();
         return resultSet;
+    }
+
+    @SneakyThrows
+    public void insertStudent(String name, int groupId) {
+        Connection connection = JdbcUtil.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO Student" +
+                "(name, number_of_group) " +
+                "VALUES(?, ?);");
+        preparedStatement.setString(1, name);
+        preparedStatement.setInt(2, groupId);
+        preparedStatement.executeUpdate();
     }
 }
