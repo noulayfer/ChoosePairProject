@@ -101,6 +101,7 @@ public class StudentService2 {
         if (!lastPair.isEmpty()) {
             updatePairStatistics(lastPair.get(0), lastPair.get(1));
             flag = true;
+            lastPair.clear();
         }
     }
 
