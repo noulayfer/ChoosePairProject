@@ -19,9 +19,6 @@ public class AverageMarkCommand implements Command {
     }
     @Override
     public void execute(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //TODO добавить флаг, если не сохранено не делать ничего
-        //TODO ошибка - возвращает предыдущих юзеров из-за некоректной работы SaveChanges
-        //TODO
         double averageMark1 = studentService.getAverageMark(1);
         double averageMark2 = studentService.getAverageMark(2);
         Student student1;
