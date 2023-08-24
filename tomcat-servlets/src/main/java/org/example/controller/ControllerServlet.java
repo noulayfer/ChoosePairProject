@@ -26,6 +26,7 @@ public class ControllerServlet extends HttpServlet {
         commands.put("stat", new FullStatisticCommand());
         commands.put("steal-point", new StealPointCommand());
         commands.put("save-changes", new SaveChangesCommand());
+        commands.put("return", new ReturnCommand());
     }
 
     @Override

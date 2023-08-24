@@ -34,6 +34,11 @@ public class BattleService {
         jdbcBattleRepository.insertBattle(battle.getDate(), battle.getOpponent(),
                 battle.getMark(), studentId);
     }
+
+    public List<Battle> getBattlesByDate(LocalDate localDate) {
+        ResultSet battlesByDate = jdbcBattleRepository.getBattlesByDate(localDate);
+        return mapResultSetToBattle(battlesByDate);
+    }
     @SneakyThrows
     private List<Battle> mapResultSetToBattle(ResultSet resultSet) {
         List<Battle> battles = new ArrayList<>();

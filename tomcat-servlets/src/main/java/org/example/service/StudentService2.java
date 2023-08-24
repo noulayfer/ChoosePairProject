@@ -8,6 +8,7 @@ import org.example.model.Battle;
 import org.example.model.Student;
 import org.example.repository.JdbcStudentRepository;
 
+import java.security.spec.ECField;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +23,9 @@ public class StudentService2 {
     BattleService battleService;
     List<Student> firstSubGroup;
     List<Student> secondSubGroup;
-    List<Student> deletedUsers;
-    boolean flag = true;
+    List<Student> respondedUsers;
+    List<Student> upsetStudents;
+    boolean saved = true;
 
     List<Student> lastPair;
     double groupOneCounter = 0;
@@ -37,7 +39,8 @@ public class StudentService2 {
         this.battleService = BattleService.getInstance();
         initializeSubGroups();
         lastPair = new ArrayList<>();
-        deletedUsers = new ArrayList<>();
+        respondedUsers = new ArrayList<>();
+        upsetStudents = new ArrayList<>();
     }
 
     public static StudentService2 getInstance() {
@@ -48,23 +51,48 @@ public class StudentService2 {
     }
 
 
-    public TwoSubGroupsAndLastPairAndDeletedUsersDTO getPairOfStudent() {
-        Student student1;
+    @SneakyThrows
+    public void updateLastPair() {
+        Student student1 = null;
+        AtomicReference<Student> student2 = null;
         try {
             student1 = choosePersonFirstGroup();
+            student2 = new AtomicReference<>(choosePersonSecondGroup());
+            AtomicReference<Student> finalStudent = student2;
+            getLastBattle(student1).ifPresent(battle -> {
+                while (battle.getOpponent() == finalStudent.get().getId()) {
+                    finalStudent.set(choosePersonSecondGroup());
+                    if (secondSubGroup.size() == 1) {
+                        break;
+                    }
+                }
+            });
         } catch (Exception e) {
             saveBattlesLastPair();
-            throw e;
-        }
-        AtomicReference<Student> student2 = new AtomicReference<>(choosePersonSecondGroup());
-        getLastBattle(student1).ifPresent(battle -> {
-            while (battle.getOpponent() == student2.get().getId()) {
-                student2.set(choosePersonSecondGroup());
-                if (secondSubGroup.size() == 1) {
-                    break;
-                }
+            if (student1 == null && student2 == null) {
+                return;
+            } else if (student1 == null) {
+                lastPair.clear();
+                lastPair.add(0, null);
+                lastPair.add(1, student2.get());
+                secondSubGroup.remove(student2);
+                List<Battle> battles2 = student2.get().getBattles();
+                Battle battle2 = new Battle(-1, 0);
+                battles2.add(battle2);
+                saved = false;
+                return;
+            } else {
+                lastPair.clear();
+                lastPair.add(0, student1);
+                lastPair.add(1, null);
+                firstSubGroup.remove(student1);
+                List<Battle> battles1 = student1.getBattles();
+                Battle battle1 = new Battle(-1, 0);
+                battles1.add(battle1);
+                saved = false;
+                return;
             }
-        });
+        }
 
 
         List<Battle> battles1 = student1.getBattles();
@@ -78,17 +106,18 @@ public class StudentService2 {
 
         updateSubGroups(student1, student2.get());
         updateLastPair(student1, student2.get());
-        flag = false;
-        return new TwoSubGroupsAndLastPairAndDeletedUsersDTO(
-                new ArrayList<>(firstSubGroup), new ArrayList<>(secondSubGroup),
-                new ArrayList<>(lastPair), new ArrayList<>(deletedUsers)
-        );
+        saved = false;
     }
 
     private void updatePairStatistics(Student student1, Student student2) {
-        groupOneCounter += getLastBattle(student1).get().getMark();
-        groupTwoCounter += getLastBattle(student2).get().getMark();
+        if (!(student1 == null)) {
+            groupOneCounter += getLastBattle(student1).get().getMark();
+        }
+        if (!(student2 == null)) {
+            groupTwoCounter += getLastBattle(student2).get().getMark();
+        }
     }
+
 
     public void saveBattlesLastPair() {
         if (lastPair.size() == 0) {
@@ -96,11 +125,17 @@ public class StudentService2 {
         }
         Student student1 = lastPair.get(0);
         Student student2 = lastPair.get(1);
-        battleService.saveStudentBattle(getLastBattle(student1).get(), student1.getId());
-        battleService.saveStudentBattle(getLastBattle(student2).get(), student2.getId());
+        if (!(student1 == null)) {
+            battleService.saveStudentBattle(getLastBattle(student1).get(), student1.getId());
+            respondedUsers.add(lastPair.get(0));
+        }
+        if (!(student2 == null)) {
+            battleService.saveStudentBattle(getLastBattle(student2).get(), student2.getId());
+            respondedUsers.add(lastPair.get(1));
+        }
         if (!lastPair.isEmpty()) {
             updatePairStatistics(lastPair.get(0), lastPair.get(1));
-            flag = true;
+            saved = true;
             lastPair.clear();
         }
     }
@@ -114,8 +149,8 @@ public class StudentService2 {
 
     private void updateLastPair(Student student1, Student student2) {
         if (!lastPair.isEmpty()) {
-            deletedUsers.add(lastPair.get(0));
-            deletedUsers.add(lastPair.get(1));
+            respondedUsers.add(lastPair.get(0));
+            respondedUsers.add(lastPair.get(1));
             lastPair.clear();
         }
         lastPair.add(student1);
@@ -123,6 +158,7 @@ public class StudentService2 {
     }
 
     public Optional<Battle> getLastBattle(Student student) {
+        if (student == null) return Optional.empty();
         List<Battle> battles = student.getBattles();
         if (battles.size() == 0) return Optional.empty();
         return Optional.ofNullable(battles.get(battles.size() - 1));
@@ -146,9 +182,14 @@ public class StudentService2 {
         return secondSubGroup.get(i);
     }
 
-    public Student getStudentFromLastPair(String name) {
-        return lastPair.stream().filter(x -> x.getName().equals(name)).findFirst().orElseThrow(
-                IllegalArgumentException::new);
+    public Student getStudentFromAnywhere(String name) {
+        try {
+            return lastPair.stream().filter(x -> x.getName()
+                    .equals(name)).findFirst().get();
+        } catch (Exception e) {
+            return respondedUsers.stream().filter(x -> x.getName()
+                    .equals(name)).findFirst().get();
+        }
     }
 
 
@@ -178,12 +219,15 @@ public class StudentService2 {
 
     public void deleteByName(String name) {
         Student studentByName = getStudentByName(name);
-        deletedUsers.add(studentByName);
+        List<Battle> battles = studentByName.getBattles();
+        Battle battle = new Battle(-1, 0);
+        battles.add(battle);
+        upsetStudents.add(studentByName);
         firstSubGroup.removeIf(x -> x.getName().equals(name));
         secondSubGroup.removeIf(x -> x.getName().equals(name));
     }
 
-        public Student getStudentByName(String name) {
+    public Student getStudentByName(String name) {
         ResultSet studentByName = jdbcStudentRepository.getStudentByName(name);
         List<Student> students = mapResultSetToStudents(studentByName);
         return students.get(0);
@@ -200,7 +244,7 @@ public class StudentService2 {
         }
     }
 
-        public TwoSubGroups showFullStat() {
+    public TwoSubGroups showFullStat() {
         ResultSet studentsByGroup1 = jdbcStudentRepository.getStudentsByGroup(1);
         ResultSet studentsByGroup2 = jdbcStudentRepository.getStudentsByGroup(2);
         List<Student> students1 = mapResultSetToStudents(studentsByGroup1);
@@ -208,4 +252,10 @@ public class StudentService2 {
         return new TwoSubGroups(students1, students2);
     }
 
+    public Student getStudentFromUpset(String name) {
+        return upsetStudents.stream()
+                .filter(x -> x.getName().equals(name))
+                .findFirst()
+                .get();
+    }
 }

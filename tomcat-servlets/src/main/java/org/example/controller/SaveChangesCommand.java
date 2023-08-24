@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public class SaveChangesCommand implements Command {
 
@@ -22,28 +23,18 @@ public class SaveChangesCommand implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<Student> lastPair = studentService.getLastPair();
-        if (lastPair.isEmpty() && studentService.getGroupOneCounter() == 0) {
+        if (lastPair.isEmpty()) {
             request.getRequestDispatcher("/controller?command=students")
                     .forward(request, response);
             return;
         }
-        Student student1 = lastPair.get(0);
-        Student student2 = lastPair.get(1);
-        double mark1 = ServletUtil.getMark(student1, studentService);
-        double mark2 = ServletUtil.getMark(student2, studentService);
-        if (mark1 == 0 && mark2 == 0) {
-            ServletUtil.setCommonAttributes(request, student1, student2,
-                    studentService.getTwoSubGroups(), studentService.getDeletedUsers());
-            ServletUtil.setCommonMarkAttributes(request, ServletUtil.getMark(student1, studentService),
-                    ServletUtil.getMark(student2, studentService));
-
-            RequestDispatcher requestDispatcher = request.getRequestDispatcher("welcome-page.jsp");
-            requestDispatcher.forward(request, response);
-            return;
-        }
         studentService.saveBattlesLastPair();
-        request.getRequestDispatcher("/controller?command=students")
-                .forward(request, response);
+        ServletUtil.setCommonAttributes(request, lastPair, studentService);
+        RequestDispatcher requestDispatcher = request.getRequestDispatcher("welcome-page.jsp");
+        requestDispatcher.forward(request, response);
+
     }
+
+
 }
 

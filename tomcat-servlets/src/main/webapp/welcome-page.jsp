@@ -109,10 +109,31 @@
 </form>
 
 <ul class="deleted-users">
-    <c:forEach var="student" items="${deletedStudents}">
-        <li>${student.name}</li>
+    <c:forEach var="student" items="${respondedStudents}">
+        <li>${student.name} - ${namesAndMarks[student.name]}
+            <form action="/tomcat/controller" method="post" class="button-delete">
+                <input type="hidden" name="command" value="add-point">
+                <input type="hidden" name="name" value="${student.name}">
+                <button type="submit">&plus;</button>
+            </form>
+            <form action="/tomcat/controller" method="post" class="button-delete">
+                <input type="hidden" name="command" value="steal-point">
+                <input type="hidden" name="name" value="${student.name}">
+                <button type="submit">&minus;</button>
+            </form>
+        </li>
+    </c:forEach>
+    <c:forEach var="student" items="${upsetStudents}">
+        <li>${student.name}
+            <form action="/tomcat/controller" method="post" class="button-delete">
+                <input type="hidden" name="command" value="return">
+                <input type="hidden" name="name" value="${student.name}">
+                <button type="submit">Return</button>
+            </form>
+        </li>
     </c:forEach>
 </ul>
+
 
 </body>
 </html>

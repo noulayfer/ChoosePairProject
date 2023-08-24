@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public class DeleteStudentCommand implements Command {
 
@@ -25,15 +26,9 @@ public class DeleteStudentCommand implements Command {
         if (lastPair.isEmpty()) {
             resp.sendRedirect(req.getContextPath() + "/controller?command=students");
         } else {
-            List<Student> pairOfStudent = studentService.getLastPair();
-            Student student1 = pairOfStudent.get(0);
-            Student student2 = pairOfStudent.get(1);
-
-            ServletUtil.setCommonAttributes(req, student1, student2,
-                    studentService.getTwoSubGroups(), studentService.getDeletedUsers());
-            ServletUtil.setCommonMarkAttributes(req, ServletUtil.getMark(student1, studentService),
-                    ServletUtil.getMark(student2, studentService));
-
+            ServletUtil.setCommonAttributes(req, lastPair, studentService);
+            ServletUtil.setCommonMarkAttributes(req, ServletUtil.getMark(lastPair.get(0), studentService),
+                    ServletUtil.getMark(lastPair.get(1), studentService));
             RequestDispatcher requestDispatcher = req.getRequestDispatcher("welcome-page.jsp");
             requestDispatcher.forward(req, resp);
         }

@@ -46,4 +46,14 @@ public class JdbcBattleRepository {
         preparedStatement.setInt(1, studentId);
         return preparedStatement.executeQuery();
     }
+
+    @SneakyThrows
+    public ResultSet getBattlesByDate(LocalDate localDate) {
+        Connection connection = JdbcUtil.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(
+                "SELECT id, date, opponent, mark, student_id " +
+                        "FROM Battles WHERE Date = ?");
+        preparedStatement.setDate(1, Date.valueOf(localDate));
+        return preparedStatement.executeQuery();
+    }
 }
