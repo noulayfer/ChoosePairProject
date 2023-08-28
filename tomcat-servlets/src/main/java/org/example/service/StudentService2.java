@@ -7,14 +7,13 @@ import org.example.DTO.TwoSubGroupsAndLastPairAndDeletedUsersDTO;
 import org.example.model.Battle;
 import org.example.model.Student;
 import org.example.repository.JdbcStudentRepository;
+import org.example.util.ServletUtil;
 
 import java.security.spec.ECField;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 @Getter
 public class StudentService2 {
@@ -53,29 +52,33 @@ public class StudentService2 {
 
     @SneakyThrows
     public void updateLastPair() {
-        Student student1 = null;
-        AtomicReference<Student> student2 = null;
+        Student student1;
+        AtomicReference<Student> student2 = new AtomicReference<>();
         try {
-            student1 = choosePersonFirstGroup();
-            student2 = new AtomicReference<>(choosePersonSecondGroup());
-            AtomicReference<Student> finalStudent = student2;
+            getTwoStudents();
+            student1 = lastPair.get(0);
+            student2.set(lastPair.get(1));
             getLastBattle(student1).ifPresent(battle -> {
-                while (battle.getOpponent() == finalStudent.get().getId()) {
-                    finalStudent.set(choosePersonSecondGroup());
+                while (battle.getOpponent() == student2.get().getId()) {
+                    student2.set(choosePersonSecondGroup());
                     if (secondSubGroup.size() == 1) {
                         break;
                     }
                 }
             });
         } catch (Exception e) {
-            saveBattlesLastPair();
-            if (student1 == null && student2 == null) {
+            student1 = lastPair.get(0);
+            Student secondStudent = lastPair.get(1);
+            if (secondStudent != null) {
+                student2.set(lastPair.get(1));
+            }
+            if (student1 == null && student2.get() == null) {
                 return;
             } else if (student1 == null) {
                 lastPair.clear();
                 lastPair.add(0, null);
                 lastPair.add(1, student2.get());
-                secondSubGroup.remove(student2);
+                secondSubGroup.remove(student2.get());
                 List<Battle> battles2 = student2.get().getBattles();
                 Battle battle2 = new Battle(-1, 0);
                 battles2.add(battle2);
@@ -107,6 +110,16 @@ public class StudentService2 {
         updateSubGroups(student1, student2.get());
         updateLastPair(student1, student2.get());
         saved = false;
+    }
+
+    private void getTwoStudents() {
+        Student student1 = choosePersonFirstGroup();
+        AtomicReference<Student> student2 = new AtomicReference<>(choosePersonSecondGroup());
+        lastPair.add(student1);
+        lastPair.add(student2.get());
+        if (student1 == null || student2.get() == null) {
+            throw new IllegalStateException("one of group is empty");
+        }
     }
 
     private void updatePairStatistics(Student student1, Student student2) {
@@ -149,8 +162,6 @@ public class StudentService2 {
 
     private void updateLastPair(Student student1, Student student2) {
         if (!lastPair.isEmpty()) {
-            respondedUsers.add(lastPair.get(0));
-            respondedUsers.add(lastPair.get(1));
             lastPair.clear();
         }
         lastPair.add(student1);
@@ -167,7 +178,7 @@ public class StudentService2 {
     public Student choosePersonFirstGroup() {
         Random random = new Random();
         if (firstSubGroup.size() == 0) {
-            throw new IllegalStateException("first group is empty");
+            return null;
         }
         int i = random.nextInt(firstSubGroup.size());
         return firstSubGroup.get(i);
@@ -176,7 +187,7 @@ public class StudentService2 {
     public Student choosePersonSecondGroup() {
         Random random = new Random();
         if (secondSubGroup.size() == 0) {
-            throw new IllegalStateException("second group is empty");
+            return null;
         }
         int i = random.nextInt(secondSubGroup.size());
         return secondSubGroup.get(i);
@@ -184,17 +195,12 @@ public class StudentService2 {
 
     public Student getStudentFromAnywhere(String name) {
         try {
-            return lastPair.stream().filter(x -> x.getName()
+            return lastPair.stream().filter(Objects::nonNull).filter(x -> x.getName()
                     .equals(name)).findFirst().get();
         } catch (Exception e) {
             return respondedUsers.stream().filter(x -> x.getName()
                     .equals(name)).findFirst().get();
         }
-    }
-
-
-    public TwoSubGroups getTwoSubGroups() {
-        return new TwoSubGroups(new ArrayList<>(firstSubGroup), new ArrayList<>(secondSubGroup));
     }
 
     private void initializeSubGroups() {
@@ -234,14 +240,10 @@ public class StudentService2 {
     }
 
     public double getAverageMark(int groupNumber) {
-        if (lastPair.size() == 0 && groupTwoCounter == 0) {
-            return 0.0;
-        }
-        if (groupNumber == 1) {
-            return groupOneCounter / studentsFromFirstGroup;
-        } else {
-            return groupTwoCounter / studentsFromSecondGroup;
-        }
+        return respondedUsers.stream()
+                .filter(student -> student.getNumberOfGroup() == groupNumber)
+                .mapToDouble(student -> ServletUtil.getMark(student, getInstance()))
+                .average().getAsDouble();
     }
 
     public TwoSubGroups showFullStat() {

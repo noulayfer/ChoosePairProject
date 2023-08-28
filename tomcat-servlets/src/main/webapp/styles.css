@@ -49,6 +49,12 @@ li {
     border-radius: 5px;
 }
 
+.subgroup h2 {
+    margin: 0;
+    white-space: nowrap;
+}
+
+
 .subgroup li {
     margin: 5px 0;
 }
@@ -140,7 +146,11 @@ body .deleted-users {
 body .deleted-users li {
     padding: 8px;
     border-bottom: 1px solid #ccc;
+    white-space: nowrap;
+    vertical-align: middle; /* Align text vertically to the middle */
+    margin: 5px 0;
 }
+
 
 /* Position the list on the left side of the screen */
 body .deleted-users {
@@ -152,4 +162,8 @@ body .deleted-users {
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
 }
 
+.deleted-users li > span {
+    min-width: 10ch; /* Adjust the value as needed */
+    display: inline-block;
+}
 

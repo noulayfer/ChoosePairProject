@@ -98,25 +98,25 @@
 </form>
 
 
-<h3><fmt:formatNumber value="${markOne}" maxFractionDigits="1" /></h3>
+<h3><fmt:formatNumber value="${markOne}" maxFractionDigits="1" />${line}<fmt:formatNumber value="${markTwo}" maxFractionDigits="1" /></h3>
 <br/>
-<h3><fmt:formatNumber value="${markTwo}" maxFractionDigits="1" /></h3>
 
 
-<form action="/tomcat/controller" method="get" class="button-form">
-    <input type="hidden" name="command" value="stat">
-    <input type="submit" value="&telrec; Full statistic" />
-</form>
+
+<%--<form action="/tomcat/controller" method="get" class="button-form">--%>
+<%--    <input type="hidden" name="command" value="stat">--%>
+<%--    <input type="submit" value="&telrec; Full statistic" />--%>
+<%--</form>--%>
 
 <ul class="deleted-users">
     <c:forEach var="student" items="${respondedStudents}">
-        <li>${student.name} - ${namesAndMarks[student.name]}
-            <form action="/tomcat/controller" method="post" class="button-delete">
+        <li><span>${student.name}</span> : ${namesAndMarks[student.name]}
+            <form action="/tomcat/controller" method="post" class="additional-plus">
                 <input type="hidden" name="command" value="add-point">
                 <input type="hidden" name="name" value="${student.name}">
                 <button type="submit">&plus;</button>
             </form>
-            <form action="/tomcat/controller" method="post" class="button-delete">
+            <form action="/tomcat/controller" method="post" class="minus-point">
                 <input type="hidden" name="command" value="steal-point">
                 <input type="hidden" name="name" value="${student.name}">
                 <button type="submit">&minus;</button>

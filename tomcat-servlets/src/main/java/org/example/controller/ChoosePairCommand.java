@@ -41,6 +41,7 @@ public class ChoosePairCommand implements Command {
             resp.sendRedirect(req.getContextPath() + "/controller?command=students");
             return;
         }
+
         if (!(updatedPair.get(0) == null) ^ !(updatedPair.get(1) == null)) {
             setAttributesForOneStudent(req);
             req.getRequestDispatcher("welcome-page.jsp").forward(req, resp);

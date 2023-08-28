@@ -30,6 +30,7 @@ public class AverageMarkCommand implements Command {
             req.getRequestDispatcher("welcome-page.jsp").forward(req, resp);
         } else {
             ServletUtil.setAverage(req, studentService);
+            req.setAttribute("line", " ---------------------- ");
             req.getRequestDispatcher("welcome-page.jsp").forward(req, resp);
         }
     }
