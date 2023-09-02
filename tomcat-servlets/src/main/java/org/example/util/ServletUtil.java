@@ -1,5 +1,6 @@
 package org.example.util;
 
+import org.example.DTO.StartPageDTO;
 import org.example.DTO.TwoSubGroups;
 import org.example.model.Battle;
 import org.example.model.Student;
@@ -64,6 +65,16 @@ public class ServletUtil {
         req.setAttribute("respondedStudents", service.getRespondedUsers());
         List<Student> upsetStudents = service.getUpsetStudents();
         req.setAttribute("upsetStudents", upsetStudents);
+    }
+
+    public static StartPageDTO setStartPageDTO(StudentService2 service) {
+        StartPageDTO dto = new StartPageDTO();
+        dto.setFirstGroup(service.getFirstSubGroup());
+        dto.setSecondGroup(service.getSecondSubGroup());
+        dto.setNamesAndMarks(ServletUtil.mapToDoubleNames(service));
+        dto.setRespondedStudents(service.getRespondedUsers());
+        dto.setUpsetStudents(service.getUpsetStudents());
+        return dto;
     }
 
 }
