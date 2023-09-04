@@ -29,7 +29,7 @@ public class SaveChangesCommand implements Command {
             return;
         }
         studentService.saveBattlesLastPair();
-        ServletUtil.setCommonAttributes(request, lastPair, studentService);
+//        ServletUtil.setCommonAttributes(request, lastPair, studentService);
         RequestDispatcher requestDispatcher = request.getRequestDispatcher("welcome-page.jsp");
         requestDispatcher.forward(request, response);
 

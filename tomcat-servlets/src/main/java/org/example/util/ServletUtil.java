@@ -1,7 +1,8 @@
 package org.example.util;
 
-import org.example.DTO.StartPageDTO;
-import org.example.DTO.TwoSubGroups;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.example.DTO.*;
 import org.example.model.Battle;
 import org.example.model.Student;
 import org.example.service.StudentService2;
@@ -11,16 +12,12 @@ import java.util.*;
 
 public class ServletUtil {
     private ServletUtil(){}
-    public static void setCommonAttributes(HttpServletRequest req, List<Student> pair, StudentService2 service) {
-        setStartPageAttributes(req, service);
-        if (pair.isEmpty()) return;
-        req.setAttribute("firstStudent", pair.get(0));
-        req.setAttribute("secondStudent", pair.get(1));
+    public static CommonPageDTO getCommonPageDTO(List<Student> pair, StudentService2 service) {
+        return new CommonPageDTO(getStartPageDTO(service), pair);
     }
 
-    public static void setCommonMarkAttributes(HttpServletRequest req, double mark1, double mark2) {
-        req.setAttribute("firstScore", mark1);
-        req.setAttribute("secondScore", mark2);
+    public static MarkDTO getMarkDTO(double mark1, double mark2) {
+        return new MarkDTO(mark1, mark2);
     }
 
     public static double getMark(Student student, StudentService2 studentService) {
@@ -52,23 +49,14 @@ public class ServletUtil {
         lastBattle.get().setMark(mark);
     }
 
-    public static void setAverage(HttpServletRequest req, StudentService2 service) {
-        req.setAttribute("markOne", service.getAverageMark(1));
-        req.setAttribute("markTwo", service.getAverageMark(2));
+    public static AverageDTO getAverageDTO(StudentService2 service) {
+        double averageMark1 = service.getAverageMark(1);
+        double averageMark2 = service.getAverageMark(2);
+        return new AverageDTO(averageMark1, averageMark2);
     }
 
-    public static void setStartPageAttributes(HttpServletRequest req, StudentService2 service) {
-        req.setAttribute("firstGroup", service.getFirstSubGroup());
-        req.setAttribute("secondGroup", service.getSecondSubGroup());
-        Map<String, Double> stringDoubleMap = ServletUtil.mapToDoubleNames(service);
-        req.setAttribute("namesAndMarks", stringDoubleMap);
-        req.setAttribute("respondedStudents", service.getRespondedUsers());
-        List<Student> upsetStudents = service.getUpsetStudents();
-        req.setAttribute("upsetStudents", upsetStudents);
-    }
-
-    public static StartPageDTO setStartPageDTO(StudentService2 service) {
-        StartPageDTO dto = new StartPageDTO();
+    public static MainPageDTO getStartPageDTO(StudentService2 service) {
+        MainPageDTO dto = new MainPageDTO();
         dto.setFirstGroup(service.getFirstSubGroup());
         dto.setSecondGroup(service.getSecondSubGroup());
         dto.setNamesAndMarks(ServletUtil.mapToDoubleNames(service));
@@ -77,4 +65,19 @@ public class ServletUtil {
         return dto;
     }
 
+    public static PageWithMarksAndPairDTO getPageWithMarksAndPair(StudentService2 service,
+                                                                  double mark1, double mark2) {
+        return new PageWithMarksAndPairDTO(
+                getCommonPageDTO(service.getLastPair(), service), getMarkDTO(mark1, mark2));
+    }
+
+    public static FullDTO getFullDTO(PageWithMarksAndPairDTO dto, AverageDTO averageDTO) {
+        return new FullDTO(dto, averageDTO);
+    }
+
+    public static ObjectMapper getObjectMapperWithTimeModule() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        return objectMapper;
+    }
 }

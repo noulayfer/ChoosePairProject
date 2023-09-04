@@ -36,6 +36,13 @@
             <version>2.15.2</version> <!-- You can specify a different version if needed -->
         </dependency>
 
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.13.0</version> <!-- Use the latest version available -->
+        </dependency>
+
+
 
 
         <dependency>

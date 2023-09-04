@@ -1,6 +1,10 @@
 package org.example.controller;
 
-import org.example.DTO.TwoSubGroupsAndLastPairAndDeletedUsersDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.DTO.MainPageDTO;
+import org.example.DTO.MarkDTO;
+import org.example.DTO.OneStudentDTO;
+import org.example.DTO.PageWithMarksAndPairDTO;
 import org.example.model.Student;
 import org.example.service.StudentService2;
 import org.example.util.ServletUtil;
@@ -10,8 +14,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
-import java.util.Map;
 
 public class ChoosePairCommand implements Command {
 
@@ -27,11 +31,18 @@ public class ChoosePairCommand implements Command {
         List<Student> lastPair = studentService.getLastPair();
         if (!lastPair.isEmpty()) {
             if (!studentService.isSaved()) {
-                ServletUtil.setCommonAttributes(req, lastPair, studentService);
-                ServletUtil.setCommonMarkAttributes(req, ServletUtil.getMark(lastPair.get(0), studentService),
+                MarkDTO markDTO = ServletUtil.getMarkDTO(ServletUtil.getMark(lastPair.get(0), studentService),
                         ServletUtil.getMark(lastPair.get(1), studentService));
-                RequestDispatcher requestDispatcher = req.getRequestDispatcher("welcome-page.jsp");
-                requestDispatcher.forward(req, resp);
+
+                PageWithMarksAndPairDTO dto = ServletUtil.getPageWithMarksAndPair
+                        (studentService, markDTO.getMark1(), markDTO.getMark2());
+                ObjectMapper objectMapper = ServletUtil.getObjectMapperWithTimeModule();
+                String json = objectMapper.writeValueAsString(dto);
+                resp.setContentType("application/json");
+                PrintWriter out = resp.getWriter();
+                out.print(json);
+                out.flush();
+
                 return;
             }
         }
@@ -43,26 +54,35 @@ public class ChoosePairCommand implements Command {
         }
 
         if (!(updatedPair.get(0) == null) ^ !(updatedPair.get(1) == null)) {
-            setAttributesForOneStudent(req);
-            req.getRequestDispatcher("welcome-page.jsp").forward(req, resp);
+            OneStudentDTO dto = getOneStudentDTO();
+            ObjectMapper objectMapper = ServletUtil.getObjectMapperWithTimeModule();
+            String json = objectMapper.writeValueAsString(dto);
+            resp.setContentType("application/json");
+            PrintWriter out = resp.getWriter();
+            out.print(json);
+            out.flush();
             return;
         }
-        ServletUtil.setCommonAttributes(req, updatedPair, studentService);
-        ServletUtil.setCommonMarkAttributes(req, ServletUtil.getMark(updatedPair.get(0), studentService),
-                ServletUtil.getMark(updatedPair.get(1), studentService));
-        RequestDispatcher requestDispatcher = req.getRequestDispatcher("welcome-page.jsp");
-        requestDispatcher.forward(req, resp);
+        MarkDTO markDTO = ServletUtil.getMarkDTO(ServletUtil.getMark(lastPair.get(0), studentService),
+                ServletUtil.getMark(lastPair.get(1), studentService));
+
+        PageWithMarksAndPairDTO dto = ServletUtil.getPageWithMarksAndPair
+                (studentService, markDTO.getMark1(), markDTO.getMark2());
+        ObjectMapper objectMapper = ServletUtil.getObjectMapperWithTimeModule();
+        String json = objectMapper.writeValueAsString(dto);
+        resp.setContentType("application/json");
+        PrintWriter out = resp.getWriter();
+        out.print(json);
+        out.flush();
     }
 
-    private void setAttributesForOneStudent(HttpServletRequest req) {
+    private OneStudentDTO getOneStudentDTO() {
         List<Student> lastPair = studentService.getLastPair();
-            ServletUtil.setStartPageAttributes(req, studentService);
+        MainPageDTO startPageDTO = ServletUtil.getStartPageDTO(studentService);
         if (lastPair.get(0) == null) {
-            Student student = lastPair.get(1);
-            req.setAttribute("secondStudent", student);
+            return new OneStudentDTO(startPageDTO, lastPair.get(1));
         } else {
-            Student student = lastPair.get(0);
-            req.setAttribute("firstStudent", student);
+            return new OneStudentDTO(startPageDTO, lastPair.get(1));
         }
     }
 }

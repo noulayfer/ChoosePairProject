@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 public class ReturnCommand implements Command {
 
@@ -29,9 +28,9 @@ public class ReturnCommand implements Command {
             response.sendRedirect(request.getContextPath() + "/controller?command=students");
             return;
         }
-        ServletUtil.setCommonAttributes(request, pairOfStudent, studentService);
-        ServletUtil.setCommonMarkAttributes(request, ServletUtil.getMark(pairOfStudent.get(0), studentService),
-                ServletUtil.getMark(pairOfStudent.get(1), studentService));
+//        ServletUtil.setCommonAttributes(request, pairOfStudent, studentService);
+//        ServletUtil.getMarkDTO(request, ServletUtil.getMark(pairOfStudent.get(0), studentService),
+//                ServletUtil.getMark(pairOfStudent.get(1), studentService));
         RequestDispatcher requestDispatcher = request.getRequestDispatcher("welcome-page.jsp");
         requestDispatcher.forward(request, response);
     }
