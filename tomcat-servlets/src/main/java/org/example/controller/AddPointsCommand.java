@@ -22,6 +22,7 @@ public class AddPointsCommand implements Command{
     }
     @Override
     public void execute(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        System.out.println(req);
         String name = req.getParameter("name");
         if (name == null || name.isEmpty()) {
             resp.sendRedirect(req.getContextPath() + "/controller?command=students");

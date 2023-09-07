@@ -18,7 +18,7 @@ public class JdbcUtil {
         initDB();
         Connection connection = null;
         try {
-            connection = DriverManager.getConnection(databaseURL, username, "");
+            connection = DriverManager.getConnection(databaseURL, username, "1237d7321");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

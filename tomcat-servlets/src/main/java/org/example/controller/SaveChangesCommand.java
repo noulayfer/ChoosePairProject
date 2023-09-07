@@ -1,5 +1,7 @@
 package org.example.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.DTO.CommonPageDTO;
 import org.example.model.Student;
 import org.example.service.StudentService2;
 import org.example.util.ServletUtil;
@@ -9,6 +11,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 
@@ -29,10 +32,13 @@ public class SaveChangesCommand implements Command {
             return;
         }
         studentService.saveBattlesLastPair();
-//        ServletUtil.setCommonAttributes(request, lastPair, studentService);
-        RequestDispatcher requestDispatcher = request.getRequestDispatcher("welcome-page.jsp");
-        requestDispatcher.forward(request, response);
-
+        CommonPageDTO dto = ServletUtil.getCommonPageDTO(lastPair, studentService);
+        ObjectMapper objectMapper = ServletUtil.getObjectMapperWithTimeModule();
+        String json = objectMapper.writeValueAsString(dto);
+        response.setContentType("application/json");
+        PrintWriter out = response.getWriter();
+        out.print(json);
+        out.flush();
     }
 
 

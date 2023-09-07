@@ -14,12 +14,12 @@ public class Main {
         JdbcBattleRepository jdbcBattleRepository = new JdbcBattleRepository();
         jdbcStudentRepository.createTableIfNotExists();
         jdbcBattleRepository.createTableIfNotExists();
-//        jdbcStudentRepository.insertStudent("Daniil", 2);
-//        jdbcStudentRepository.insertStudent("Alexander", 2);
-//        jdbcStudentRepository.insertStudent("Illya", 2);
-//        jdbcStudentRepository.insertStudent("Alexander M", 1);
-//        jdbcStudentRepository.insertStudent("Yousuf", 1);
-//        jdbcStudentRepository.insertStudent("Stephan", 1);
+        jdbcStudentRepository.insertStudent("Daniil", 2);
+        jdbcStudentRepository.insertStudent("Alexander", 2);
+        jdbcStudentRepository.insertStudent("Illya", 2);
+        jdbcStudentRepository.insertStudent("Alexander M", 1);
+        jdbcStudentRepository.insertStudent("Yousuf", 1);
+        jdbcStudentRepository.insertStudent("Stephan", 1);
 
     }
 }
